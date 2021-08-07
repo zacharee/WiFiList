@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">WiFiList</string>
+
+    <string name="copied">Copied password to clipboard.</string>
 </resources>

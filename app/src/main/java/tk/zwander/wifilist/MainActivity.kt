@@ -1,15 +1,22 @@
 package tk.zwander.wifilist
 
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.pm.ParceledListSlice
 import android.net.wifi.WifiConfiguration
 import android.os.Bundle
 import android.os.IBinder
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,9 +40,11 @@ import tk.zwander.wifilist.ui.theme.WiFiListTheme
 import tk.zwander.wifilist.util.hasShizukuPermission
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
+import tk.zwander.wifilist.util.stripQuotes
 
 class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListener {
     companion object {
@@ -82,6 +91,7 @@ class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListe
         if (Shizuku.isPreV11() || Shizuku.getVersion() < 11) {
             permResultListener.launch(ShizukuProvider.PERMISSION)
         } else {
+            Shizuku.addRequestPermissionResultListener(this)
             Shizuku.requestPermission(SHIZUKU_PERM)
         }
     }
@@ -102,8 +112,12 @@ class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListe
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainContent(networks: List<WifiConfiguration>) {
+    val context = LocalContext.current
+    val cbm = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
     WiFiListTheme {
         // A surface container using the 'background' color from the theme
         Surface(
@@ -112,18 +126,33 @@ fun MainContent(networks: List<WifiConfiguration>) {
         ) {
             LazyColumn {
                 items(networks) { config ->
+                    val psk = config.preSharedKey
+                    val wep = config.wepKeys
+                    val key = when {
+                        !psk.isNullOrBlank() -> psk.stripQuotes()
+                        !wep.all { it.isNullOrBlank() } -> wep.joinToString("\n") { it.stripQuotes() }
+                        else -> "<NONE>"
+                    }
+
                     Card(
                         modifier = Modifier.padding(4.dp)
                             .fillMaxWidth()
+                            .combinedClickable(
+                                onLongClick = {
+                                    cbm.primaryClip = ClipData.newPlainText(config.SSID, key)
+                                    Toast.makeText(context, R.string.copied, Toast.LENGTH_SHORT).show()
+                                },
+                                onClick = {}
+                            )
                     ) {
                         Column(
                             modifier = Modifier.padding(8.dp)
                         ) {
                             Text(
-                                text = config.SSID,
+                                text = config.printableSsid,
                                 fontWeight = FontWeight.Bold
                             )
-                            Text(text = config.preSharedKey ?: "<NONE>")
+                            Text(text = key)
                         }
                     }
                 }
