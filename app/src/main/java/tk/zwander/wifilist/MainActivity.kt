@@ -23,10 +23,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
@@ -41,6 +38,7 @@ import tk.zwander.wifilist.util.hasShizukuPermission
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
@@ -63,6 +61,7 @@ class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListe
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             MainContent(currentNetworks)
         }
@@ -124,35 +123,51 @@ fun MainContent(networks: List<WifiConfiguration>) {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colors.background
         ) {
-            LazyColumn {
-                items(networks) { config ->
-                    val psk = config.preSharedKey
-                    val wep = config.wepKeys
-                    val key = when {
-                        !psk.isNullOrBlank() -> psk.stripQuotes()
-                        !wep.all { it.isNullOrBlank() } -> wep.joinToString("\n") { it.stripQuotes() }
-                        else -> "<NONE>"
-                    }
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                TopAppBar(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.saved_wifi_networks),
+                        modifier = Modifier.padding(start = 16.dp),
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                LazyColumn {
+                    items(networks) { config ->
+                        val psk = config.preSharedKey
+                        val wep = config.wepKeys
+                        val key = when {
+                            !psk.isNullOrBlank() -> psk.stripQuotes()
+                            !wep.all { it.isNullOrBlank() } -> wep.joinToString("\n") { it.stripQuotes() }
+                            else -> "<NONE>"
+                        }
 
-                    Card(
-                        modifier = Modifier.padding(4.dp)
-                            .fillMaxWidth()
-                            .combinedClickable(
-                                onLongClick = {
-                                    cbm.primaryClip = ClipData.newPlainText(config.SSID, key)
-                                    Toast.makeText(context, R.string.copied, Toast.LENGTH_SHORT).show()
-                                },
-                                onClick = {}
-                            )
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(8.dp)
+                        Card(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .fillMaxWidth()
+                                .combinedClickable(
+                                    onLongClick = {
+                                        cbm.primaryClip = ClipData.newPlainText(config.SSID, key)
+                                        Toast
+                                            .makeText(context, R.string.copied, Toast.LENGTH_SHORT)
+                                            .show()
+                                    },
+                                    onClick = {}
+                                )
                         ) {
-                            Text(
-                                text = config.printableSsid,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(text = key)
+                            Column(
+                                modifier = Modifier.padding(8.dp)
+                            ) {
+                                Text(
+                                    text = config.printableSsid,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(text = key)
+                            }
                         }
                     }
                 }
