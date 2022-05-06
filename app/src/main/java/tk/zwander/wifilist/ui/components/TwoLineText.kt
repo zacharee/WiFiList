@@ -4,6 +4,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,35 +22,37 @@ fun TwoLineText(
         mutableStateOf(!secure)
     }
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-    ) {
-        Text(
-            fontSize = 16.sp,
-            text = if (secure && !showing) CharArray(value?.length ?: 0) { '*' }
-                .joinToString("") else (value ?: ""),
-            modifier = Modifier
-                .animateContentSize()
-                .then(
-                    if (secure) {
-                        Modifier.clickable(
-                            interactionSource = remember {
-                                MutableInteractionSource()
-                            },
-                            indication = null
-                        ) {
-                            showing = !showing
+    SelectionContainer {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = modifier
+        ) {
+            Text(
+                fontSize = 16.sp,
+                text = if (secure && !showing) CharArray(value?.length ?: 0) { '*' }
+                    .joinToString("") else (value ?: ""),
+                modifier = Modifier
+                    .animateContentSize()
+                    .then(
+                        if (secure) {
+                            Modifier.clickable(
+                                interactionSource = remember {
+                                    MutableInteractionSource()
+                                },
+                                indication = null
+                            ) {
+                                showing = !showing
+                            }
+                        } else {
+                            Modifier
                         }
-                    } else {
-                        Modifier
-                    }
-                ),
+                    ),
             )
 
-        Text(
-            fontSize = 13.sp,
-            text = label
-        )
+            Text(
+                fontSize = 13.sp,
+                text = label
+            )
+        }
     }
 }
