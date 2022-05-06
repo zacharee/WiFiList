@@ -169,9 +169,7 @@ fun WiFiCard(
                             wifiEnterpriseConfig.eapMethod.let {
                                 if (it != -1) {
                                     TwoLineText(
-                                        value = (WifiEnterpriseConfig.Eap::class.java.getDeclaredField(
-                                            "strings"
-                                        )
+                                        value = (WifiEnterpriseConfig.Eap::class.java.getDeclaredField("strings")
                                             .get(null) as Array<String>)[it],
                                         label = "EAP Method"
                                     )

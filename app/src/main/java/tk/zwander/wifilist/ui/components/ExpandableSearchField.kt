@@ -7,16 +7,16 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import tk.zwander.wifilist.R
 
@@ -39,6 +39,7 @@ fun ExpandableSearchView(
         Box(
             contentAlignment = Alignment.CenterEnd,
             modifier = Modifier.fillMaxWidth()
+                .fillMaxHeight()
         ) {
             when (isSearchFieldVisible) {
                 true -> ExpandedSearchView(
@@ -92,6 +93,7 @@ fun CollapsedSearchView(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ExpandedSearchView(
     searchDisplay: String,
@@ -104,6 +106,7 @@ fun ExpandedSearchView(
     val focusManager = LocalFocusManager.current
 
     val textFieldFocusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     SideEffect {
         textFieldFocusRequester.requestFocus()
@@ -117,6 +120,7 @@ fun ExpandedSearchView(
         IconButton(onClick = {
             onExpandedChanged(false)
             onSearchDisplayClosed()
+            keyboardController?.hide()
         }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_back),
@@ -129,23 +133,25 @@ fun ExpandedSearchView(
             onValueChange = {
                 onSearchDisplayChanged(it)
             },
-            trailingIcon = {
-                SearchIcon(iconTint = tint)
-            },
             modifier = Modifier
                 .fillMaxWidth()
+                .heightIn(min = 32.dp)
                 .focusRequester(textFieldFocusRequester),
-            label = {
-                Text(text = stringResource(id = R.string.search), color = tint)
-            },
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done
             ),
+            placeholder = {
+                Text(stringResource(id = R.string.search))
+            },
             keyboardActions = KeyboardActions(
                 onDone = {
                     focusManager.clearFocus()
                 }
-            )
+            ),
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color.Transparent
+            ),
+            singleLine = true
         )
     }
 }
