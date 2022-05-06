@@ -5,7 +5,9 @@
       <map>
         <entry key="app/src/main/java/tk/zwander/wifilist/MainActivity.kt" value="0.18649789029535865" />
         <entry key="app/src/main/res/drawable/ic_back.xml" value="0.134" />
+        <entry key="app/src/main/res/drawable/ic_locked.xml" value="0.134" />
         <entry key="app/src/main/res/drawable/ic_search.xml" value="0.134" />
+        <entry key="app/src/main/res/drawable/ic_unlocked.xml" value="0.134" />
       </map>
     </option>
   </component>

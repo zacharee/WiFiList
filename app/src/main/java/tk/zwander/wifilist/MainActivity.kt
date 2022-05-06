@@ -33,7 +33,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import tk.zwander.wifilist.ui.components.ExpandableSearchView
+import tk.zwander.wifilist.ui.components.WiFiCard
 import tk.zwander.wifilist.util.stripQuotes
+import kotlin.math.exp
 
 class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListener {
     companion object {
@@ -116,12 +118,8 @@ class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListe
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainContent(networks: List<WifiConfiguration>) {
-    val context = LocalContext.current
-    val cbm = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-
     var searchText by remember {
         mutableStateOf("")
     }
@@ -152,6 +150,7 @@ fun MainContent(networks: List<WifiConfiguration>) {
                                     }
                                 ),
                             fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colors.onSurface
                         )
 
                         Spacer(modifier = Modifier.weight(1f))
@@ -176,39 +175,18 @@ fun MainContent(networks: List<WifiConfiguration>) {
                 LazyColumn(
                     contentPadding = padding
                 ) {
-                    items(networks.filter { it.SSID.contains(searchText, true) }) { config ->
-                        val psk = config.preSharedKey
-                        val wep = config.wepKeys
-                        val key = when {
-                            !psk.isNullOrBlank() -> psk.stripQuotes()
-                            !wep.all { it.isNullOrBlank() } -> wep.joinToString("\n") { it.stripQuotes() }
-                            else -> stringResource(id = R.string.no_password)
+                    items(networks.filter { it.SSID.contains(searchText, true) }, { item -> "${item.SSID}${item.preSharedKey}${item.wepKeys.joinToString("")}" }) { config ->
+                        var expanded by remember {
+                            mutableStateOf(false)
                         }
-
-                        Card(
+                        WiFiCard(
+                            config = config,
                             modifier = Modifier
                                 .padding(4.dp)
-                                .fillMaxWidth()
-                                .combinedClickable(
-                                    onLongClick = {
-                                        cbm.primaryClip = ClipData.newPlainText(config.SSID, key)
-                                        Toast
-                                            .makeText(context, R.string.copied, Toast.LENGTH_SHORT)
-                                            .show()
-                                    },
-                                    onClick = {}
-                                )
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(8.dp)
-                            ) {
-                                Text(
-                                    text = config.printableSsid,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(text = key)
-                            }
-                        }
+                                .fillMaxWidth(),
+                            expanded = expanded,
+                            onExpandChange = { expanded = it }
+                        )
                     }
                 }
             }
