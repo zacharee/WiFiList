@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">WiFiList</string>
     <string name="saved_wifi_networks">Saved WiFi Networks</string>
+    <string name="search">Search</string>
+    <string name="back">Back</string>
+    <string name="no_password">No Password</string>
 
     <string name="copied">Copied password to clipboard.</string>
 </resources>

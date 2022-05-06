@@ -12,17 +12,14 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import rikka.shizuku.Shizuku
@@ -35,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import tk.zwander.wifilist.ui.components.ExpandableSearchView
 import tk.zwander.wifilist.util.stripQuotes
 
 class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListener {
@@ -42,13 +40,14 @@ class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListe
         private const val SHIZUKU_PERM = 10001
     }
 
-    private val permResultListener = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-        if (!isGranted) {
-            finish()
-        } else {
-            loadNetworks()
+    private val permResultListener =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (!isGranted) {
+                finish()
+            } else {
+                loadNetworks()
+            }
         }
-    }
 
     private val currentNetworks = mutableStateListOf<WifiConfiguration>()
 
@@ -93,14 +92,27 @@ class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListe
         val base = Class.forName("android.net.wifi.IWifiManager")
         val stub = Class.forName("android.net.wifi.IWifiManager\$Stub")
         val asInterface = stub.getMethod("asInterface", IBinder::class.java)
-        val iwm = asInterface.invoke(null, ShizukuBinderWrapper(SystemServiceHelper.getSystemService(Context.WIFI_SERVICE)))
+        val iwm = asInterface.invoke(
+            null,
+            ShizukuBinderWrapper(SystemServiceHelper.getSystemService(Context.WIFI_SERVICE))
+        )
 
-        val getPrivilegedConfiguredNetworks = base.getMethod("getPrivilegedConfiguredNetworks", String::class.java, String::class.java)
-        val privilegedConfigs = getPrivilegedConfiguredNetworks.invoke(iwm, "shell", "com.android.network")
-        val privilegedConfigsList = privilegedConfigs::class.java.getMethod("getList").invoke(privilegedConfigs) as List<WifiConfiguration>
+        val getPrivilegedConfiguredNetworks = base.getMethod(
+            "getPrivilegedConfiguredNetworks",
+            String::class.java,
+            String::class.java
+        )
+        val privilegedConfigs =
+            getPrivilegedConfiguredNetworks.invoke(iwm, "shell", "com.android.network")
+        val privilegedConfigsList = privilegedConfigs::class.java.getMethod("getList")
+            .invoke(privilegedConfigs) as List<WifiConfiguration>
 
         currentNetworks.clear()
-        currentNetworks.addAll(privilegedConfigsList.sortedBy { it.SSID.lowercase() }.distinctBy { "${it.SSID}${it.preSharedKey}${it.wepKeys.joinToString("")}" })
+        currentNetworks.addAll(
+            privilegedConfigsList
+                .sortedBy { it.SSID.lowercase() }
+                .distinctBy { "${it.SSID}${it.preSharedKey}${it.wepKeys.joinToString("")}" }
+        )
     }
 }
 
@@ -110,32 +122,67 @@ fun MainContent(networks: List<WifiConfiguration>) {
     val context = LocalContext.current
     val cbm = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
+    var searchText by remember {
+        mutableStateOf("")
+    }
+    var searchExpanded by remember {
+        mutableStateOf(false)
+    }
+
     WiFiListTheme {
         // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colors.background
         ) {
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                TopAppBar(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.saved_wifi_networks),
-                        modifier = Modifier.padding(start = 16.dp),
-                        fontWeight = FontWeight.Bold
-                    )
+            Scaffold(
+                topBar = {
+                    TopAppBar(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.saved_wifi_networks),
+                            modifier = Modifier
+                                .animateContentSize()
+                                .then(
+                                    if (!searchExpanded) {
+                                        Modifier.padding(start = 16.dp)
+                                    } else {
+                                        Modifier.width(0.dp)
+                                    }
+                                ),
+                            fontWeight = FontWeight.Bold,
+                        )
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        ExpandableSearchView(
+                            searchDisplay = searchText,
+                            onSearchDisplayChanged = {
+                                searchText = it
+                            },
+                            onSearchDisplayClosed = {
+                                searchExpanded = false
+                                searchText = ""
+                            },
+                            onSearchDisplayOpened = {
+                                searchExpanded = true
+                            },
+                            tint = MaterialTheme.colors.onSurface
+                        )
+                    }
                 }
-                LazyColumn {
-                    items(networks) { config ->
+            ) { padding ->
+                LazyColumn(
+                    contentPadding = padding
+                ) {
+                    items(networks.filter { it.SSID.contains(searchText, true) }) { config ->
                         val psk = config.preSharedKey
                         val wep = config.wepKeys
                         val key = when {
                             !psk.isNullOrBlank() -> psk.stripQuotes()
                             !wep.all { it.isNullOrBlank() } -> wep.joinToString("\n") { it.stripQuotes() }
-                            else -> "<NONE>"
+                            else -> stringResource(id = R.string.no_password)
                         }
 
                         Card(
@@ -172,5 +219,7 @@ fun MainContent(networks: List<WifiConfiguration>) {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    MainContent(listOf())
+    WiFiListTheme(darkTheme = true) {
+        MainContent(listOf())
+    }
 }
