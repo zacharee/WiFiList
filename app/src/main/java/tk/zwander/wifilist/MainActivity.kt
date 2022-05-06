@@ -100,7 +100,7 @@ class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListe
         val privilegedConfigsList = privilegedConfigs::class.java.getMethod("getList").invoke(privilegedConfigs) as List<WifiConfiguration>
 
         currentNetworks.clear()
-        currentNetworks.addAll(privilegedConfigsList.sortedBy { it.SSID.lowercase() })
+        currentNetworks.addAll(privilegedConfigsList.sortedBy { it.SSID.lowercase() }.distinctBy { "${it.SSID}${it.preSharedKey}${it.wepKeys.joinToString("")}" })
     }
 }
 
