@@ -96,12 +96,12 @@ fun WiFiCard(
                 mainAxisSize = SizeMode.Expand
             ) {
                 TwoLineText(
-                    label = "Security",
+                    label = stringResource(id = R.string.security),
                     value = WifiConfiguration.KeyMgmt.strings[config.authType]
                 )
 
                 TwoLineText(
-                    label = "Password",
+                    label = stringResource(id = R.string.password),
                     value = key,
                     secure = config.authType != WifiConfiguration.KeyMgmt.NONE
                 )
@@ -116,82 +116,86 @@ fun WiFiCard(
                         mainAxisSize = SizeMode.Expand
                     ) {
                         config.BSSID.letNotEmpty {
-                            TwoLineText(value = config.BSSID, label = "BSSID")
+                            TwoLineText(value = config.BSSID, label = stringResource(id = R.string.bssid))
                         }
                         config.FQDN.letNotEmpty {
-                            TwoLineText(value = config.FQDN, label = "FQDN")
+                            TwoLineText(value = config.FQDN, label = stringResource(id = R.string.fqdn))
                         }
-                        TwoLineText(value = config.creatorName, label = "Creator")
-                        TwoLineText(value = config.lastUpdateName, label = "Last Update")
-                        TwoLineText(value = config.allowAutojoin.toString(), label = "Auto-Join")
-                        TwoLineText(value = config.hiddenSSID.toString(), label = "Hidden")
+                        TwoLineText(value = config.creatorName, label = stringResource(id = R.string.creator))
+                        TwoLineText(value = config.lastUpdateName, label = stringResource(id = R.string.last_update))
+                        TwoLineText(value = config.allowAutojoin.toString(), label = stringResource(
+                            id = R.string.auto_join
+                        ))
+                        TwoLineText(value = config.hiddenSSID.toString(), label = stringResource(id = R.string.hidden))
 
                         config.enterpriseConfig?.let { wifiEnterpriseConfig ->
                             wifiEnterpriseConfig.anonymousIdentity.letNotEmpty {
-                                TwoLineText(value = it, label = "Anonymous ID")
+                                TwoLineText(value = it, label = stringResource(id = R.string.anonymous_id))
                             }
                             wifiEnterpriseConfig.altSubjectMatch.letNotEmpty {
-                                TwoLineText(value = it, label = "Alt Subject")
+                                TwoLineText(value = it, label = stringResource(id = R.string.alt_subject))
                             }
                             wifiEnterpriseConfig.caPath.letNotEmpty {
-                                TwoLineText(value = it, label = "CA Path")
+                                TwoLineText(value = it, label = stringResource(id = R.string.ca_path))
                             }
                             wifiEnterpriseConfig.clientCertificateAlias.letNotEmpty {
-                                TwoLineText(value = it, label = "Cert Alias")
+                                TwoLineText(value = it, label = stringResource(id = R.string.cert_alias))
                             }
                             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
                                 wifiEnterpriseConfig.clientKeyPairAlias.letNotEmpty {
-                                    TwoLineText(value = it, label = "Keypair Alias")
+                                    TwoLineText(value = it, label = stringResource(id = R.string.keypair_alias))
                                 }
                                 wifiEnterpriseConfig.decoratedIdentityPrefix.letNotEmpty {
-                                    TwoLineText(value = it, label = "ID Prefix")
+                                    TwoLineText(value = it, label = stringResource(id = R.string.id_prefix))
                                 }
                                 wifiEnterpriseConfig.isEapMethodServerCertUsed.let {
                                     TwoLineText(
                                         value = it.toString(),
-                                        label = "EAP Server Cert Used"
+                                        label = stringResource(id = R.string.eap_server_cert_used)
                                     )
 
                                     if (it) {
                                         wifiEnterpriseConfig.isServerCertValidationEnabled.let {
-                                            TwoLineText(value = it.toString(), label = "Server Cert Validation")
+                                            TwoLineText(value = it.toString(), label = stringResource(
+                                                id = R.string.server_cert_validation
+                                            ))
                                         }
                                     }
                                 }
                             }
                             wifiEnterpriseConfig.clientPrivateKey?.let {
-                                TwoLineText(value = it.format, label = "Private Key Format")
-                                TwoLineText(value = it.algorithm, label = "Private Key Algorithm")
+                                TwoLineText(value = it.format, label = stringResource(id = R.string.private_key_format))
+                                TwoLineText(value = it.algorithm, label = stringResource(id = R.string.private_key_algorithm))
                             }
                             wifiEnterpriseConfig.domainSuffixMatch.letNotEmpty {
-                                TwoLineText(value = it, label = "Domain Suffix")
+                                TwoLineText(value = it, label = stringResource(id = R.string.domain_suffix))
                             }
                             wifiEnterpriseConfig.eapMethod.let {
                                 if (it != -1) {
                                     TwoLineText(
                                         value = (WifiEnterpriseConfig.Eap::class.java.getDeclaredField("strings")
                                             .get(null) as Array<String>)[it],
-                                        label = "EAP Method"
+                                        label = stringResource(id = R.string.eap_method)
                                     )
                                 }
                             }
                             wifiEnterpriseConfig.identity.letNotEmpty {
-                                TwoLineText(value = it, label = "ID")
+                                TwoLineText(value = it, label = stringResource(id = R.string.identity))
                             }
                             wifiEnterpriseConfig.isAuthenticationSimBased.let {
-                                TwoLineText(value = it.toString(), label = "SIM Based")
+                                TwoLineText(value = it.toString(), label = stringResource(id = R.string.sim_based))
                             }
                             wifiEnterpriseConfig.password.letNotEmpty {
-                                TwoLineText(value = it, label = "EAP Password")
+                                TwoLineText(value = it, label = stringResource(id = R.string.password))
                             }
                             wifiEnterpriseConfig.plmn.letNotEmpty {
-                                TwoLineText(value = it, label = "PLMN")
+                                TwoLineText(value = it, label = stringResource(id = R.string.plmn))
                             }
                             wifiEnterpriseConfig.realm.letNotEmpty {
-                                TwoLineText(value = it, label = "Realm")
+                                TwoLineText(value = it, label = stringResource(id = R.string.realm))
                             }
                             wifiEnterpriseConfig.wapiCertSuite.letNotEmpty {
-                                TwoLineText(value = it, label = "Cert Suite")
+                                TwoLineText(value = it, label = stringResource(id = R.string.cert_suite))
                             }
                         }
                     }

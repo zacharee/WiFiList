@@ -1,20 +1,15 @@
 package tk.zwander.wifilist
 
 import android.annotation.SuppressLint
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.wifi.WifiConfiguration
 import android.os.Bundle
 import android.os.IBinder
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -28,14 +23,11 @@ import rikka.shizuku.ShizukuProvider
 import rikka.shizuku.SystemServiceHelper
 import tk.zwander.wifilist.ui.theme.WiFiListTheme
 import tk.zwander.wifilist.util.hasShizukuPermission
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import tk.zwander.wifilist.ui.components.ExpandableSearchView
 import tk.zwander.wifilist.ui.components.WiFiCard
-import tk.zwander.wifilist.util.stripQuotes
-import kotlin.math.exp
 
 class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListener {
     companion object {

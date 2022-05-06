@@ -4,6 +4,32 @@
     <string name="search">Search</string>
     <string name="back">Back</string>
     <string name="no_password">No Password</string>
+    <string name="security">Security</string>
+    <string name="password">Password</string>
+    <string name="bssid">BSSID</string>
+    <string name="fqdn">FQDN</string>
+    <string name="creator">Creator</string>
+    <string name="last_update">Last Update</string>
+    <string name="auto_join">Auto-Join</string>
+    <string name="hidden">Hidden</string>
+    <string name="anonymous_id">Anonymous ID</string>
+    <string name="alt_subject">Alt Subject</string>
+    <string name="ca_path">CA Path</string>
+    <string name="cert_alias">Cert Alias</string>
+    <string name="keypair_alias">Keypair Alias</string>
+    <string name="id_prefix">ID Prefix</string>
+    <string name="eap_server_cert_used">EAP Server Cert Used</string>
+    <string name="server_cert_validation">Server Cert Validation</string>
+    <string name="private_key_format">Private Key Format</string>
+    <string name="private_key_algorithm">Private Key Algorithm</string>
+    <string name="domain_suffix">Domain Suffix</string>
+    <string name="eap_method">EAP Method</string>
+    <string name="identity">ID</string>
+    <string name="sim_based">SIM Based</string>
+    <string name="eap_password">EAP Password</string>
+    <string name="plmn">PLMN</string>
+    <string name="realm">Realm</string>
+    <string name="cert_suite">Cert Suite</string>
 
     <string name="copied">Copied password to clipboard.</string>
 </resources>
