@@ -30,7 +30,6 @@ import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.flowlayout.SizeMode
 import tk.zwander.wifilist.R
 import tk.zwander.wifilist.util.stripQuotes
-import kotlin.math.exp
 
 @SuppressLint("SoonBlockedPrivateApi")
 @OptIn(ExperimentalFoundationApi::class)
