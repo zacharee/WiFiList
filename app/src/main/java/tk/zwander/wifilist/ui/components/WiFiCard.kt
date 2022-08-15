@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package tk.zwander.wifilist.ui.components
 
 import android.annotation.SuppressLint
@@ -154,11 +156,9 @@ fun WiFiCard(
                                     )
 
                                     if (it) {
-                                        wifiEnterpriseConfig.isServerCertValidationEnabled.let {
-                                            TwoLineText(value = it.toString(), label = stringResource(
-                                                id = R.string.server_cert_validation
-                                            ))
-                                        }
+                                        TwoLineText(value = wifiEnterpriseConfig.isServerCertValidationEnabled.toString(), label = stringResource(
+                                            id = R.string.server_cert_validation
+                                        ))
                                     }
                                 }
                             }
@@ -171,6 +171,7 @@ fun WiFiCard(
                             }
                             wifiEnterpriseConfig.eapMethod.let {
                                 if (it != -1) {
+                                    @Suppress("UNCHECKED_CAST")
                                     TwoLineText(
                                         value = (WifiEnterpriseConfig.Eap::class.java.getDeclaredField("strings")
                                             .get(null) as Array<String>)[it],
@@ -181,9 +182,10 @@ fun WiFiCard(
                             wifiEnterpriseConfig.identity.letNotEmpty {
                                 TwoLineText(value = it, label = stringResource(id = R.string.identity))
                             }
-                            wifiEnterpriseConfig.isAuthenticationSimBased.let {
-                                TwoLineText(value = it.toString(), label = stringResource(id = R.string.sim_based))
-                            }
+                            TwoLineText(
+                                value = wifiEnterpriseConfig.isAuthenticationSimBased.toString(),
+                                label = stringResource(id = R.string.sim_based)
+                            )
                             wifiEnterpriseConfig.password.letNotEmpty {
                                 TwoLineText(value = it, label = stringResource(id = R.string.password))
                             }
