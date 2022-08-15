@@ -5,9 +5,9 @@ pluginManagement {
         mavenCentral()
     }
     plugins {
-        id 'com.android.application' version '7.3.0-alpha09'
-        id 'com.android.library' version '7.3.0-alpha09'
-        id 'org.jetbrains.kotlin.android' version '1.6.10'
+        id 'com.android.application' version '7.3.0-beta05'
+        id 'com.android.library' version '7.3.0-beta05'
+        id 'org.jetbrains.kotlin.android' version '1.7.10'
     }
 }
 dependencyResolutionManagement {

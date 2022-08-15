@@ -1,11 +1,14 @@
 package tk.zwander.wifilist
 
 import android.annotation.SuppressLint
+import android.content.AttributionSource
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.wifi.WifiConfiguration
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -91,13 +94,27 @@ class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListe
             ShizukuBinderWrapper(SystemServiceHelper.getSystemService(Context.WIFI_SERVICE))
         )
 
-        val getPrivilegedConfiguredNetworks = base.getMethod(
-            "getPrivilegedConfiguredNetworks",
-            String::class.java,
-            String::class.java
-        )
-        val privilegedConfigs =
-            getPrivilegedConfiguredNetworks.invoke(iwm, "shell", "com.android.network")
+        Log.e("WifiList", "${base.methods.filter { it.name.contains("configured", true) }}")
+
+        val user = if (Shizuku.getUid() == 0) "root" else "shell"
+        val pkg = "com.android.network"
+
+        val privilegedConfigs = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S_V2) {
+            val getPrivilegedConfiguredNetworks = base.getMethod(
+                "getPrivilegedConfiguredNetworks",
+                String::class.java,
+                String::class.java,
+                Bundle::class.java
+            )
+            getPrivilegedConfiguredNetworks.invoke(iwm, user, pkg, Bundle().apply { putParcelable("EXTRA_PARAM_KEY_ATTRIBUTION_SOURCE", AttributionSource(Shizuku.getUid(), pkg, pkg, null as Set<String>?, null)) })
+        } else {
+            val getPrivilegedConfiguredNetworks = base.getMethod(
+                "getPrivilegedConfiguredNetworks",
+                String::class.java,
+                String::class.java
+            )
+            getPrivilegedConfiguredNetworks.invoke(iwm, user, pkg)
+        }
         val privilegedConfigsList = privilegedConfigs::class.java.getMethod("getList")
             .invoke(privilegedConfigs) as List<WifiConfiguration>
 
