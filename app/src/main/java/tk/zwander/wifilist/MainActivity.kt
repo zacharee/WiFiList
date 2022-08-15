@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package tk.zwander.wifilist
 
 import android.annotation.SuppressLint
@@ -8,7 +10,6 @@ import android.net.wifi.WifiConfiguration
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -94,8 +95,6 @@ class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListe
             ShizukuBinderWrapper(SystemServiceHelper.getSystemService(Context.WIFI_SERVICE))
         )
 
-        Log.e("WifiList", "${base.methods.filter { it.name.contains("configured", true) }}")
-
         val user = if (Shizuku.getUid() == 0) "root" else "shell"
         val pkg = "com.android.network"
 
@@ -123,6 +122,7 @@ class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListe
             )
             getPrivilegedConfiguredNetworks.invoke(iwm, user, pkg)
         }
+        @Suppress("UNCHECKED_CAST")
         val privilegedConfigsList = privilegedConfigs::class.java.getMethod("getList")
             .invoke(privilegedConfigs) as List<WifiConfiguration>
 
