@@ -106,7 +106,15 @@ class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListe
                 String::class.java,
                 Bundle::class.java
             )
-            getPrivilegedConfiguredNetworks.invoke(iwm, user, pkg, Bundle().apply { putParcelable("EXTRA_PARAM_KEY_ATTRIBUTION_SOURCE", AttributionSource(Shizuku.getUid(), pkg, pkg, null as Set<String>?, null)) })
+            getPrivilegedConfiguredNetworks.invoke(
+                iwm, user, pkg,
+                Bundle().apply {
+                    putParcelable(
+                        "EXTRA_PARAM_KEY_ATTRIBUTION_SOURCE",
+                        AttributionSource(Shizuku.getUid(), pkg, pkg, null as Set<String>?, null)
+                    )
+                }
+            )
         } else {
             val getPrivilegedConfiguredNetworks = base.getMethod(
                 "getPrivilegedConfiguredNetworks",
