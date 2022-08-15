@@ -14,9 +14,9 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,7 +31,7 @@ import com.google.accompanist.flowlayout.FlowMainAxisAlignment
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.flowlayout.SizeMode
 import tk.zwander.wifilist.R
-import tk.zwander.wifilist.util.stripQuotes
+import tk.zwander.wifilist.util.*
 
 @SuppressLint("SoonBlockedPrivateApi")
 @OptIn(ExperimentalFoundationApi::class)
@@ -57,7 +57,7 @@ fun WiFiCard(
         modifier = modifier
             .combinedClickable(
                 onLongClick = {
-                    cbm.primaryClip = ClipData.newPlainText(config.SSID, key)
+                    cbm.setPrimaryClip(ClipData.newPlainText(config.SSID, key))
                     Toast
                         .makeText(context, R.string.copied, Toast.LENGTH_SHORT)
                         .show()

@@ -17,7 +17,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -110,7 +110,8 @@ class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListe
                 Bundle().apply {
                     putParcelable(
                         "EXTRA_PARAM_KEY_ATTRIBUTION_SOURCE",
-                        AttributionSource(Shizuku.getUid(), pkg, pkg, null as Set<String>?, null)
+                        AttributionSource::class.java.getConstructor(Int::class.java, String::class.java, String::class.java, Set::class.java, AttributionSource::class.java)
+                            .newInstance(Shizuku.getUid(), pkg, pkg, null as Set<String>?, null)
                     )
                 }
             )
@@ -135,6 +136,7 @@ class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListe
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainContent(networks: List<WifiConfiguration>) {
     var searchText by remember {
@@ -148,12 +150,12 @@ fun MainContent(networks: List<WifiConfiguration>) {
         // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colors.background
+            color = MaterialTheme.colorScheme.background
         ) {
             Scaffold(
                 topBar = {
-                    TopAppBar(
-                        modifier = Modifier.fillMaxWidth()
+                    BottomAppBar(
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text(
                             text = stringResource(id = R.string.saved_wifi_networks),
@@ -167,7 +169,7 @@ fun MainContent(networks: List<WifiConfiguration>) {
                                     }
                                 ),
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colors.onSurface
+                            color = MaterialTheme.colorScheme.onSurface
                         )
 
                         Spacer(modifier = Modifier.weight(1f))
@@ -184,7 +186,7 @@ fun MainContent(networks: List<WifiConfiguration>) {
                             onSearchDisplayOpened = {
                                 searchExpanded = true
                             },
-                            tint = MaterialTheme.colors.onSurface
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }

@@ -4,7 +4,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -29,7 +29,7 @@ fun ExpandableSearchView(
     onSearchDisplayOpened: () -> Unit,
     modifier: Modifier = Modifier,
     expandedInitially: Boolean = false,
-    tint: Color = MaterialTheme.colors.onPrimary
+    tint: Color = MaterialTheme.colorScheme.onPrimary
 ) {
     val (expanded, onExpandedChanged) = remember {
         mutableStateOf(expandedInitially)
@@ -79,7 +79,7 @@ fun SearchIcon(iconTint: Color) {
 fun CollapsedSearchView(
     onExpandedChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    tint: Color = MaterialTheme.colors.onPrimary,
+    tint: Color = MaterialTheme.colorScheme.onPrimary,
 ) {
     Row(
         modifier = modifier
@@ -93,7 +93,7 @@ fun CollapsedSearchView(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ExpandedSearchView(
     searchDisplay: String,
@@ -101,7 +101,7 @@ fun ExpandedSearchView(
     onSearchDisplayClosed: () -> Unit,
     onExpandedChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    tint: Color = MaterialTheme.colors.onBackground,
+    tint: Color = MaterialTheme.colorScheme.onBackground,
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -149,7 +149,7 @@ fun ExpandedSearchView(
                 }
             ),
             colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.Transparent
+                containerColor = Color.Transparent
             ),
             singleLine = true
         )
