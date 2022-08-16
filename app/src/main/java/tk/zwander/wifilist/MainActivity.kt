@@ -153,7 +153,7 @@ fun MainContent(networks: List<WifiConfiguration>) {
             color = MaterialTheme.colorScheme.background
         ) {
             Scaffold(
-                topBar = {
+                bottomBar = {
                     BottomAppBar(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
