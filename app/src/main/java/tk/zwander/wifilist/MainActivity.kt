@@ -88,22 +88,23 @@ class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListe
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.shizuku_required_title)
             .setMessage(R.string.shizuku_required_desc)
-            .setPositiveButton(R.string.install_shizuku) { _, _ ->
-                launchUrl("https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api")
-            }
-            .setNeutralButton(R.string.close, null)
+            .setNegativeButton(R.string.close, null)
             .setCancelable(false)
             .setOnDismissListener { finish() }
             .apply {
                 try {
                     packageManager.getApplicationInfo("moe.shizuku.privileged.api", 0)
-                    setNegativeButton(R.string.open_shizuku) { _, _ ->
+                    setPositiveButton(R.string.open_shizuku) { _, _ ->
                         val shizukuIntent = Intent(Intent.ACTION_MAIN)
                         shizukuIntent.component = ComponentName("moe.shizuku.privileged.api", "moe.shizuku.manager.MainActivity")
                         shizukuIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         startActivity(shizukuIntent)
                     }
-                } catch (_: PackageManager.NameNotFoundException) {}
+                } catch (_: PackageManager.NameNotFoundException) {
+                    setPositiveButton(R.string.install_shizuku) { _, _ ->
+                        launchUrl("https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api")
+                    }
+                }
             }
             .show()
     }
