@@ -23,3 +23,10 @@ The wireless ADB method allows creating a shell-level process completely on-devi
 The added permission means the shell process created by Shizuku is able to access `getPrivilegedConfiguredNetworks()`.
 
 All of this combined means WiFiList can show you all your saved networks along with their passwords.
+
+## Privacy
+WiFiList is (almost) fully open source. Feel free to browse the code to confirm security.
+
+The only part of WiFiList that isn't open source is the Firebase Crashlytics implementation. This is purely for collecting crash logs. No analytics or personal data are sent to Firebase.
+
+Aside from Crashlytics, zero data is collected and there is zero internet connectivity. *Your passwords remain on your device.*
