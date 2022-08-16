@@ -13,10 +13,12 @@ import android.os.IBinder
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -31,6 +33,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import tk.zwander.wifilist.ui.components.ExpandableSearchView
+import tk.zwander.wifilist.ui.components.Menu
+import tk.zwander.wifilist.ui.components.SupportersDialog
 import tk.zwander.wifilist.ui.components.WiFiCard
 
 class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListener {
@@ -145,6 +149,12 @@ fun MainContent(networks: List<WifiConfiguration>) {
     var searchExpanded by remember {
         mutableStateOf(false)
     }
+    var showingPopup by remember(searchExpanded) {
+        mutableStateOf(false)
+    }
+    var showingSupporters by remember {
+        mutableStateOf(false)
+    }
 
     WiFiListTheme {
         // A surface container using the 'background' color from the theme
@@ -157,20 +167,14 @@ fun MainContent(networks: List<WifiConfiguration>) {
                     BottomAppBar(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Text(
-                            text = stringResource(id = R.string.saved_wifi_networks),
-                            modifier = Modifier
-                                .animateContentSize()
-                                .then(
-                                    if (!searchExpanded) {
-                                        Modifier.padding(start = 16.dp)
-                                    } else {
-                                        Modifier.width(0.dp)
-                                    }
-                                ),
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
+                        AnimatedVisibility(visible = !searchExpanded) {
+                            Text(
+                                text = stringResource(id = R.string.saved_wifi_networks),
+                                modifier = Modifier.padding(start = 16.dp),
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
 
                         Spacer(modifier = Modifier.weight(1f))
 
@@ -186,8 +190,23 @@ fun MainContent(networks: List<WifiConfiguration>) {
                             onSearchDisplayOpened = {
                                 searchExpanded = true
                             },
-                            tint = MaterialTheme.colorScheme.onSurface
+                            tint = MaterialTheme.colorScheme.onSurface,
                         )
+
+                        AnimatedVisibility(visible = !searchExpanded) {
+                            IconButton(onClick = { showingPopup = !showingPopup }) {
+                                Icon(
+                                    imageVector = Icons.Default.Menu,
+                                    contentDescription = stringResource(id = R.string.menu)
+                                )
+
+                                Menu(
+                                    isShowing = showingPopup,
+                                    onDismissRequest = { showingPopup = false },
+                                    onShowSupportersDialog = { showingSupporters = !showingSupporters }
+                                )
+                            }
+                        }
                     }
                 }
             ) { padding ->
@@ -210,6 +229,8 @@ fun MainContent(networks: List<WifiConfiguration>) {
                 }
             }
         }
+
+        SupportersDialog(isShowing = showingSupporters, onDismissRequest = { showingSupporters = false })
     }
 }
 

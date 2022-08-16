@@ -1,6 +1,7 @@
 package tk.zwander.wifilist.ui.components
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -35,10 +36,10 @@ fun ExpandableSearchView(
         mutableStateOf(expandedInitially)
     }
 
-    Crossfade(targetState = expanded) { isSearchFieldVisible ->
+    Crossfade(targetState = expanded, modifier = Modifier.animateContentSize()) { isSearchFieldVisible ->
         Box(
-            contentAlignment = Alignment.CenterEnd,
-            modifier = Modifier.fillMaxWidth()
+            contentAlignment = Alignment.CenterStart,
+            modifier = modifier
                 .fillMaxHeight()
         ) {
             when (isSearchFieldVisible) {
@@ -47,7 +48,6 @@ fun ExpandableSearchView(
                     onSearchDisplayChanged = onSearchDisplayChanged,
                     onSearchDisplayClosed = onSearchDisplayClosed,
                     onExpandedChanged = onExpandedChanged,
-                    modifier = modifier,
                     tint = tint
                 )
 
@@ -58,7 +58,6 @@ fun ExpandableSearchView(
                             onSearchDisplayOpened()
                         }
                     },
-                    modifier = modifier,
                     tint = tint
                 )
             }

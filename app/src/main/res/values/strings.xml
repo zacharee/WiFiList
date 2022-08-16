@@ -31,5 +31,12 @@
     <string name="realm">Realm</string>
     <string name="cert_suite">Cert Suite</string>
 
+    <string name="menu">Menu</string>
+    <string name="patreon">Patreon</string>
+    <string name="supporters">Supporters</string>
+    <string name="twitter">Twitter</string>
+    <string name="website">Website</string>
+    <string name="github">GitHub</string>
+
     <string name="copied">Copied password to clipboard.</string>
 </resources>
