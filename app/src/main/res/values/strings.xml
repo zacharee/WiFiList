@@ -37,6 +37,12 @@
     <string name="twitter">Twitter</string>
     <string name="website">Website</string>
     <string name="github">GitHub</string>
+    <string name="close">Close</string>
 
     <string name="copied">Copied password to clipboard.</string>
+
+    <string name="shizuku_required_title">Shizuku Required</string>
+    <string name="shizuku_required_desc">Shizuku is required to use this app. If you have Shizuku installed, please start it. Otherwise, you can install Shizuku from the Play Store.</string>
+    <string name="install_shizuku">Install Shizuku</string>
+    <string name="open_shizuku">Open Shizuku</string>
 </resources>

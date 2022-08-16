@@ -4,7 +4,9 @@ package tk.zwander.wifilist
 
 import android.annotation.SuppressLint
 import android.content.AttributionSource
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.wifi.WifiConfiguration
 import android.os.Build
@@ -32,10 +34,12 @@ import tk.zwander.wifilist.util.hasShizukuPermission
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import tk.zwander.wifilist.ui.components.ExpandableSearchView
 import tk.zwander.wifilist.ui.components.Menu
 import tk.zwander.wifilist.ui.components.SupportersDialog
 import tk.zwander.wifilist.ui.components.WiFiCard
+import tk.zwander.wifilist.util.launchUrl
 
 class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListener {
     companion object {
@@ -45,7 +49,7 @@ class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListe
     private val permResultListener =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (!isGranted) {
-                finish()
+                showShizukuFailureDialog()
             } else {
                 loadNetworks()
             }
@@ -61,7 +65,7 @@ class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListe
         }
 
         if (!Shizuku.pingBinder()) {
-            finish()
+            showShizukuFailureDialog()
             return
         }
 
@@ -74,10 +78,34 @@ class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListe
 
     override fun onRequestPermissionResult(requestCode: Int, grantResult: Int) {
         if (grantResult != PackageManager.PERMISSION_GRANTED) {
-            finish()
+            showShizukuFailureDialog()
         } else {
             loadNetworks()
         }
+    }
+
+    private fun showShizukuFailureDialog() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.shizuku_required_title)
+            .setMessage(R.string.shizuku_required_desc)
+            .setPositiveButton(R.string.install_shizuku) { _, _ ->
+                launchUrl("https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api")
+            }
+            .setNeutralButton(R.string.close, null)
+            .setCancelable(false)
+            .setOnDismissListener { finish() }
+            .apply {
+                try {
+                    packageManager.getApplicationInfo("moe.shizuku.privileged.api", 0)
+                    setNegativeButton(R.string.open_shizuku) { _, _ ->
+                        val shizukuIntent = Intent(Intent.ACTION_MAIN)
+                        shizukuIntent.component = ComponentName("moe.shizuku.privileged.api", "moe.shizuku.manager.MainActivity")
+                        shizukuIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(shizukuIntent)
+                    }
+                } catch (_: PackageManager.NameNotFoundException) {}
+            }
+            .show()
     }
 
     private fun requestShizukuPermission() {

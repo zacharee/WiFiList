@@ -33,4 +33,8 @@
             android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
     </application>
 
+    <queries>
+        <package android:name="moe.shizuku.privileged.api" />
+    </queries>
+
 </manifest>
