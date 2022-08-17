@@ -49,7 +49,7 @@ fun WiFiCard(
     val wep = config.wepKeys
     val key = when {
         !psk.isNullOrBlank() -> psk.stripQuotes()
-        !wep.all { it.isNullOrBlank() } -> wep.joinToString("\n") { it.stripQuotes() }
+        !wep.all { it.isNullOrBlank() } -> wep.filterNotNull().joinToString("\n") { it.stripQuotes() }
         else -> stringResource(id = R.string.no_password)
     }
 
