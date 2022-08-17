@@ -9,14 +9,9 @@ import android.content.Context
 import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiEnterpriseConfig
 import android.os.Build
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,7 +29,7 @@ import tk.zwander.wifilist.R
 import tk.zwander.wifilist.util.*
 
 @SuppressLint("SoonBlockedPrivateApi")
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WiFiCard(
     config: WifiConfiguration,
@@ -54,18 +49,10 @@ fun WiFiCard(
     }
 
     Card(
-        modifier = modifier
-            .combinedClickable(
-                onLongClick = {
-                    cbm.setPrimaryClip(ClipData.newPlainText(config.SSID, key))
-                    Toast
-                        .makeText(context, R.string.copied, Toast.LENGTH_SHORT)
-                        .show()
-                },
-                onClick = {
-                    onExpandChange(!expanded)
-                }
-            )
+        modifier = modifier,
+        onClick = {
+            onExpandChange(!expanded)
+        }
     ) {
         Column(
             modifier = Modifier.padding(8.dp)
@@ -101,11 +88,28 @@ fun WiFiCard(
                     value = WifiConfiguration.KeyMgmt.strings[config.authType]
                 )
 
-                TwoLineText(
-                    label = stringResource(id = R.string.password),
-                    value = key,
-                    secure = config.authType != WifiConfiguration.KeyMgmt.NONE
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    TwoLineText(
+                        label = stringResource(id = R.string.password),
+                        value = key,
+                        secure = config.authType != WifiConfiguration.KeyMgmt.NONE
+                    )
+
+                    if (config.authType != WifiConfiguration.KeyMgmt.NONE) {
+                        IconButton(
+                            onClick = {
+                                cbm.setPrimaryClip(ClipData.newPlainText(config.SSID, key))
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_content_copy_24),
+                                contentDescription = stringResource(id = R.string.copy)
+                            )
+                        }
+                    }
+                }
             }
 
             AnimatedVisibility(visible = expanded) {

@@ -18,41 +18,54 @@ fun TwoLineText(
     modifier: Modifier = Modifier,
     secure: Boolean = false
 ) {
+    if (secure) {
+        SelectionContainer {
+            TwoLineTextInternal(secure, value, label, modifier)
+        }
+    } else {
+        TwoLineTextInternal(secure, value, label, modifier)
+    }
+}
+
+@Composable
+private fun TwoLineTextInternal(
+    secure: Boolean,
+    value: String?,
+    label: String,
+    modifier: Modifier = Modifier
+) {
     var showing by remember(secure) {
         mutableStateOf(!secure)
     }
-
-    SelectionContainer {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = modifier
-        ) {
-            Text(
-                fontSize = 16.sp,
-                text = if (secure && !showing) CharArray(value?.length ?: 0) { '*' }
-                    .joinToString("") else (value ?: ""),
-                modifier = Modifier
-                    .animateContentSize()
-                    .then(
-                        if (secure) {
-                            Modifier.clickable(
-                                interactionSource = remember {
-                                    MutableInteractionSource()
-                                },
-                                indication = null
-                            ) {
-                                showing = !showing
-                            }
-                        } else {
-                            Modifier
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        Text(
+            fontSize = 16.sp,
+            text = if (secure && !showing) CharArray(value?.length ?: 0) { '*' }
+                .joinToString("") else (value ?: ""),
+            modifier = Modifier
+                .animateContentSize()
+                .then(
+                    if (secure) {
+                        Modifier.clickable(
+                            interactionSource = remember {
+                                MutableInteractionSource()
+                            },
+                            indication = null
+                        ) {
+                            showing = !showing
                         }
-                    ),
-            )
+                    } else {
+                        Modifier
+                    }
+                ),
+        )
 
-            Text(
-                fontSize = 13.sp,
-                text = label
-            )
-        }
+        Text(
+            fontSize = 13.sp,
+            text = label
+        )
     }
 }

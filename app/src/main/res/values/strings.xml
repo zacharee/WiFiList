@@ -38,6 +38,7 @@
     <string name="website">Website</string>
     <string name="github">GitHub</string>
     <string name="close">Close</string>
+    <string name="copy">Copy</string>
 
     <string name="copied">Copied password to clipboard.</string>
 
