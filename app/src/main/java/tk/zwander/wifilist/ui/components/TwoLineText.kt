@@ -1,14 +1,18 @@
 package tk.zwander.wifilist.ui.components
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
@@ -18,13 +22,7 @@ fun TwoLineText(
     modifier: Modifier = Modifier,
     secure: Boolean = false
 ) {
-    if (secure) {
-        SelectionContainer {
-            TwoLineTextInternal(secure, value, label, modifier)
-        }
-    } else {
-        TwoLineTextInternal(secure, value, label, modifier)
-    }
+    TwoLineTextInternal(secure, value, label, modifier)
 }
 
 @Composable
@@ -41,31 +39,59 @@ private fun TwoLineTextInternal(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
-        Text(
-            fontSize = 16.sp,
-            text = if (secure && !showing) CharArray(value?.length ?: 0) { '*' }
-                .joinToString("") else (value ?: ""),
-            modifier = Modifier
-                .animateContentSize()
-                .then(
-                    if (secure) {
-                        Modifier.clickable(
-                            interactionSource = remember {
-                                MutableInteractionSource()
-                            },
-                            indication = null
-                        ) {
-                            showing = !showing
-                        }
-                    } else {
-                        Modifier
-                    }
-                ),
-        )
+        Crossfade(
+            targetState = secure && !showing,
+            modifier = Modifier.animateContentSize()
+        ) {
+            if (it) {
+                ValueContent(
+                    value = CharArray(value?.length ?: 0) { '·' }.joinToString(""),
+                    secure = secure,
+                    onShowingChanged = { showing = !showing }
+                )
+            } else {
+                ValueContent(
+                    value = value,
+                    secure = secure,
+                    onShowingChanged = { showing = !showing }
+                )
+            }
+        }
 
         Text(
             fontSize = 13.sp,
             text = label
         )
+    }
+}
+
+@Composable
+private fun ValueContent(
+    value: String?,
+    secure: Boolean,
+    onShowingChanged: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier,
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .then(if (secure) {
+                    Modifier.clickable {
+                        onShowingChanged()
+                    }
+                } else {
+                    Modifier
+                })
+                .padding(8.dp)
+        ) {
+            Text(
+                fontSize = 16.sp,
+                text = value ?: "",
+                fontFamily = FontFamily.Monospace
+            )
+        }
     }
 }

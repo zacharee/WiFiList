@@ -101,7 +101,8 @@ fun WiFiCard(
                         IconButton(
                             onClick = {
                                 cbm.setPrimaryClip(ClipData.newPlainText(config.SSID, key))
-                            }
+                            },
+                            modifier = Modifier.size(24.dp)
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.baseline_content_copy_24),
