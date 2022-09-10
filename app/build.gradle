@@ -44,11 +44,11 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.core:core-ktx:1.9.0'
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.ui:ui-util:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
-    implementation "androidx.compose.material3:material3:1.0.0-alpha16"
+    implementation "androidx.compose.material3:material3:1.0.0-beta01"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
     implementation 'androidx.activity:activity-compose:1.5.1'
@@ -56,8 +56,8 @@ dependencies {
     implementation "dev.rikka.shizuku:api:12.1.0"
     implementation "dev.rikka.shizuku:provider:12.1.0"
     implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:4.3'
-    implementation 'com.google.android.material:material:1.7.0-beta01'
-    implementation "com.google.accompanist:accompanist-flowlayout:0.24.13-rc"
+    implementation 'com.google.android.material:material:1.8.0-alpha01'
+    implementation "com.google.accompanist:accompanist-flowlayout:0.26.2-beta"
 
     implementation platform('com.google.firebase:firebase-bom:30.3.2')
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
