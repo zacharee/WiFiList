@@ -129,7 +129,7 @@ class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListe
         )
 
         val user = if (Shizuku.getUid() == 0) "root" else "shell"
-        val pkg = "com.android.network"
+        val pkg = "com.android.shell"
 
         val privilegedConfigs = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S_V2) {
             val getPrivilegedConfiguredNetworks = base.getMethod(
@@ -143,8 +143,13 @@ class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListe
                 Bundle().apply {
                     putParcelable(
                         "EXTRA_PARAM_KEY_ATTRIBUTION_SOURCE",
-                        AttributionSource::class.java.getConstructor(Int::class.java, String::class.java, String::class.java, Set::class.java, AttributionSource::class.java)
-                            .newInstance(Shizuku.getUid(), pkg, pkg, null as Set<String>?, null)
+                        AttributionSource::class.java.getConstructor(
+                            Int::class.java,
+                            String::class.java,
+                            String::class.java,
+                            Set::class.java,
+                            AttributionSource::class.java
+                        ).newInstance(Shizuku.getUid(), pkg, pkg, null as Set<String>?, null)
                     )
                 }
             )

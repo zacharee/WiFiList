@@ -11,7 +11,7 @@ android {
     defaultConfig {
         applicationId "tk.zwander.wifilist"
         minSdk 30
-        targetSdk 33
+        targetSdk 32
         versionCode 5
         versionName "1.0.2"
 
