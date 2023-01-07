@@ -100,13 +100,14 @@ fun WiFiCard(
                     if (config.authType != WifiConfiguration.KeyMgmt.NONE) {
                         IconButton(
                             onClick = {
-                                cbm.setPrimaryClip(ClipData.newPlainText(config.SSID, key))
+                                cbm.primaryClip = ClipData.newPlainText(config.SSID, key)
                             },
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(32.dp)
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.baseline_content_copy_24),
-                                contentDescription = stringResource(id = R.string.copy)
+                                contentDescription = stringResource(id = R.string.copy),
+                                modifier = Modifier.padding(4.dp)
                             )
                         }
                     }
