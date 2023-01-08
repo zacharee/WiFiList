@@ -37,7 +37,7 @@ object Preferences {
             gson.fromJson(
                 it[Keys.CACHED_INFO],
                 object : TypeToken<ArrayList<WifiConfiguration>>() {}.type
-            )
+            ) ?: listOf()
         }
 
     suspend fun Context.updateCacheNetworks(cache: Boolean) {
