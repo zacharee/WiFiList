@@ -34,7 +34,8 @@ fun Menu(
     isShowing: Boolean,
     onDismissRequest: () -> Unit,
     onShowSupportersDialog: () -> Unit,
-    modifier: Modifier = Modifier
+    onShowSettings: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val links = remember {
         listOf(
@@ -58,7 +59,12 @@ fun Menu(
             MenuItem(
                 R.string.twitter,
                 "https://twitter.com/Wander1236"
-            )
+            ),
+            MenuItem(
+                R.string.settings
+            ) {
+                onShowSettings()
+            }
         )
     }
 

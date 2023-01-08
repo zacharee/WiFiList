@@ -23,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import rikka.shizuku.Shizuku
@@ -34,14 +35,27 @@ import tk.zwander.wifilist.util.hasShizukuPermission
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import tk.zwander.wifilist.ui.components.ExpandableSearchView
 import tk.zwander.wifilist.ui.components.Menu
+import tk.zwander.wifilist.ui.components.SettingsUI
 import tk.zwander.wifilist.ui.components.SupportersDialog
 import tk.zwander.wifilist.ui.components.WiFiCard
+import tk.zwander.wifilist.util.Preferences.cacheNetworks
+import tk.zwander.wifilist.util.Preferences.cachedInfo
+import tk.zwander.wifilist.util.Preferences.updateCachedInfo
 import tk.zwander.wifilist.util.launchUrl
 
-class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListener {
+class MainActivity : ComponentActivity(),
+    Shizuku.OnRequestPermissionResultListener,
+    CoroutineScope by MainScope() {
     companion object {
         private const val SHIZUKU_PERM = 10001
     }
@@ -51,7 +65,9 @@ class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListe
             if (!isGranted) {
                 showShizukuFailureDialog()
             } else {
-                loadNetworks()
+                launch {
+                    loadNetworks()
+                }
             }
         }
 
@@ -72,7 +88,9 @@ class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListe
         if (!hasShizukuPermission) {
             requestShizukuPermission()
         } else {
-            loadNetworks()
+            launch {
+                loadNetworks()
+            }
         }
     }
 
@@ -80,33 +98,51 @@ class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListe
         if (grantResult != PackageManager.PERMISSION_GRANTED) {
             showShizukuFailureDialog()
         } else {
-            loadNetworks()
+            launch {
+                loadNetworks()
+            }
         }
     }
 
+    override fun onDestroy() {
+        cancel()
+        super.onDestroy()
+    }
+
     private fun showShizukuFailureDialog() {
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.shizuku_required_title)
-            .setMessage(R.string.shizuku_required_desc)
-            .setNegativeButton(R.string.close, null)
-            .setCancelable(false)
-            .setOnDismissListener { finish() }
-            .apply {
-                try {
-                    packageManager.getApplicationInfo("moe.shizuku.privileged.api", 0)
-                    setPositiveButton(R.string.open_shizuku) { _, _ ->
-                        val shizukuIntent = Intent(Intent.ACTION_MAIN)
-                        shizukuIntent.component = ComponentName("moe.shizuku.privileged.api", "moe.shizuku.manager.MainActivity")
-                        shizukuIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        startActivity(shizukuIntent)
+        launch {
+            MaterialAlertDialogBuilder(this@MainActivity)
+                .setTitle(R.string.shizuku_required_title)
+                .setMessage(R.string.shizuku_required_desc)
+                .setNegativeButton(R.string.close) { _, _ ->
+                    finish()
+                }
+                .setCancelable(false)
+                .apply {
+                    try {
+                        packageManager.getApplicationInfo("moe.shizuku.privileged.api", 0)
+                        setPositiveButton(R.string.open_shizuku) { _, _ ->
+                            val shizukuIntent = Intent(Intent.ACTION_MAIN)
+                            shizukuIntent.component = ComponentName("moe.shizuku.privileged.api", "moe.shizuku.manager.MainActivity")
+                            shizukuIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            startActivity(shizukuIntent)
+                            finish()
+                        }
+                    } catch (_: PackageManager.NameNotFoundException) {
+                        setPositiveButton(R.string.install_shizuku) { _, _ ->
+                            launchUrl("https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api")
+                            finish()
+                        }
                     }
-                } catch (_: PackageManager.NameNotFoundException) {
-                    setPositiveButton(R.string.install_shizuku) { _, _ ->
-                        launchUrl("https://play.google.com/store/apps/details?id=moe.shizuku.privileged.api")
+
+                    if (cachedInfo.first().isNotEmpty()) {
+                        setNeutralButton(R.string.view_cached) { _, _ ->
+                            loadCachedNetworks()
+                        }
                     }
                 }
-            }
-            .show()
+                .show()
+        }
     }
 
     private fun requestShizukuPermission() {
@@ -118,8 +154,17 @@ class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListe
         }
     }
 
+    private fun loadCachedNetworks() {
+        launch(Dispatchers.IO) {
+            cachedInfo.collect {
+                currentNetworks.clear()
+                currentNetworks.addAll(it)
+            }
+        }
+    }
+
     @SuppressLint("PrivateApi")
-    private fun loadNetworks() {
+    private suspend fun loadNetworks() {
         val base = Class.forName("android.net.wifi.IWifiManager")
         val stub = Class.forName("android.net.wifi.IWifiManager\$Stub")
         val asInterface = stub.getMethod("asInterface", IBinder::class.java)
@@ -165,16 +210,20 @@ class MainActivity : ComponentActivity(), Shizuku.OnRequestPermissionResultListe
         val privilegedConfigsList = privilegedConfigs::class.java.getMethod("getList")
             .invoke(privilegedConfigs) as List<WifiConfiguration>
 
+        val items = privilegedConfigsList
+            .sortedBy { it.SSID.lowercase() }
+            .distinctBy { "${it.SSID}${it.preSharedKey}${it.wepKeys.joinToString("")}" }
+
         currentNetworks.clear()
-        currentNetworks.addAll(
-            privilegedConfigsList
-                .sortedBy { it.SSID.lowercase() }
-                .distinctBy { "${it.SSID}${it.preSharedKey}${it.wepKeys.joinToString("")}" }
-        )
+        currentNetworks.addAll(items)
+
+        if (cacheNetworks.first()) {
+            updateCachedInfo(items)
+        }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun MainContent(networks: List<WifiConfiguration>) {
     var searchText by remember {
@@ -187,6 +236,9 @@ fun MainContent(networks: List<WifiConfiguration>) {
         mutableStateOf(false)
     }
     var showingSupporters by remember {
+        mutableStateOf(false)
+    }
+    var showingSettings by remember {
         mutableStateOf(false)
     }
 
@@ -237,7 +289,8 @@ fun MainContent(networks: List<WifiConfiguration>) {
                                 Menu(
                                     isShowing = showingPopup,
                                     onDismissRequest = { showingPopup = false },
-                                    onShowSupportersDialog = { showingSupporters = !showingSupporters }
+                                    onShowSupportersDialog = { showingSupporters = !showingSupporters },
+                                    onShowSettings = { showingSettings = true }
                                 )
                             }
                         }
@@ -265,6 +318,29 @@ fun MainContent(networks: List<WifiConfiguration>) {
         }
 
         SupportersDialog(isShowing = showingSupporters, onDismissRequest = { showingSupporters = false })
+
+        if (showingSettings) {
+            AlertDialog(
+                onDismissRequest = {
+                    showingSettings = false
+                },
+                title = {
+                    Text(text = stringResource(id = R.string.settings))
+                },
+                text = {
+                    SettingsUI(loadedNetworks = networks)
+                },
+                properties = DialogProperties(
+                    usePlatformDefaultWidth = false
+                ),
+                modifier = Modifier.fillMaxWidth(0.75f),
+                confirmButton = {
+                    TextButton(onClick = { showingSettings = false }) {
+                        Text(text = stringResource(id = android.R.string.ok))
+                    }
+                }
+            )
+        }
     }
 }
 

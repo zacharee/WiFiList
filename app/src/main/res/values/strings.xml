@@ -39,6 +39,11 @@
     <string name="github">GitHub</string>
     <string name="close">Close</string>
     <string name="copy">Copy</string>
+    <string name="settings">Settings</string>
+    <string name="view_cached">View Cached</string>
+
+    <string name="cache_networks">Cache Networks</string>
+    <string name="cache_networks_desc">Save network info to WiFiList\'s preferences so you can view it without Shizuku running.</string>
 
     <string name="copied">Copied password to clipboard.</string>
 
