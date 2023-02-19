@@ -39,7 +39,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion '1.3.0'
+        kotlinCompilerExtensionVersion '1.4.2'
     }
     namespace 'tk.zwander.wifilist'
 }
@@ -49,17 +49,17 @@ dependencies {
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.ui:ui-util:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
-    implementation "androidx.compose.material3:material3:1.1.0-alpha03"
+    implementation "androidx.compose.material3:material3:1.1.0-alpha06"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
     implementation 'androidx.activity:activity-compose:1.6.1'
     implementation 'androidx.fragment:fragment-ktx:1.5.5'
     implementation 'androidx.datastore:datastore-preferences:1.1.0-alpha01'
 
-    implementation "dev.rikka.shizuku:api:12.2.0"
-    implementation "dev.rikka.shizuku:provider:12.2.0"
+    implementation "dev.rikka.shizuku:api:13.1.0"
+    implementation "dev.rikka.shizuku:provider:13.1.0"
     implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:4.3'
-    implementation 'com.google.android.material:material:1.8.0-beta01'
+    implementation 'com.google.android.material:material:1.9.0-alpha01'
     implementation 'com.google.accompanist:accompanist-flowlayout:0.28.0'
 
     implementation platform('com.google.firebase:firebase-bom:31.1.1')
