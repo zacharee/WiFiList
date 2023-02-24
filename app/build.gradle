@@ -1,8 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'com.google.gms.google-services'
-    id 'com.google.firebase.crashlytics'
+    id 'com.bugsnag.android.gradle'
 }
 
 android {
@@ -49,7 +48,7 @@ dependencies {
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.ui:ui-util:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
-    implementation "androidx.compose.material3:material3:1.1.0-alpha06"
+    implementation 'androidx.compose.material3:material3:1.1.0-alpha07'
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
     implementation 'androidx.activity:activity-compose:1.6.1'
@@ -62,11 +61,9 @@ dependencies {
     implementation 'com.google.android.material:material:1.9.0-alpha01'
     implementation 'com.google.accompanist:accompanist-flowlayout:0.28.0'
 
-    implementation platform('com.google.firebase:firebase-bom:31.1.1')
-    implementation 'com.google.firebase:firebase-crashlytics-ktx'
-
     implementation 'com.github.zacharee:PatreonSupportersRetrieval:8436bbdbdc'
     implementation 'com.google.code.gson:gson:2.10.1'
+    implementation "com.bugsnag:bugsnag-android:5.28.4"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

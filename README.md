@@ -27,6 +27,9 @@ All of this combined means WiFiList can show you all your saved networks along w
 ## Privacy
 WiFiList is (almost) fully open source. Feel free to browse the code to confirm security.
 
-The only part of WiFiList that isn't open source is the Firebase Crashlytics implementation. This is purely for collecting crash logs. No analytics or personal data are sent to Firebase.
+Aside from crash reports, zero data is collected and there is zero internet connectivity. *Your passwords remain on your device.*
 
-Aside from Crashlytics, zero data is collected and there is zero internet connectivity. *Your passwords remain on your device.*
+## Error Reporting
+WiFiList uses Bugsnag for error reporting as of version 1.1.2. Previous versions use Firebase Crashlytics.
+
+<a href="https://www.bugsnag.com"><img src="https://assets-global.website-files.com/607f4f6df411bd01527dc7d5/63bc40cd9d502eda8ea74ce7_Bugsnag%20Full%20Color.svg" width="200"></a>
