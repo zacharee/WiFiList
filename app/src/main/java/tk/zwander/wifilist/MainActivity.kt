@@ -18,8 +18,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -27,17 +25,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import rikka.shizuku.Shizuku
-import rikka.shizuku.ShizukuBinderWrapper
-import rikka.shizuku.ShizukuProvider
-import rikka.shizuku.SystemServiceHelper
-import tk.zwander.wifilist.ui.theme.WiFiListTheme
-import tk.zwander.wifilist.util.hasShizukuPermission
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -47,14 +38,20 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import rikka.shizuku.Shizuku
+import rikka.shizuku.ShizukuBinderWrapper
+import rikka.shizuku.ShizukuProvider
+import rikka.shizuku.SystemServiceHelper
 import tk.zwander.wifilist.ui.components.ExpandableSearchView
 import tk.zwander.wifilist.ui.components.Menu
 import tk.zwander.wifilist.ui.components.SettingsUI
 import tk.zwander.wifilist.ui.components.SupportersDialog
 import tk.zwander.wifilist.ui.components.WiFiCard
+import tk.zwander.wifilist.ui.theme.WiFiListTheme
 import tk.zwander.wifilist.util.Preferences.cacheNetworks
 import tk.zwander.wifilist.util.Preferences.cachedInfo
 import tk.zwander.wifilist.util.Preferences.updateCachedInfo
+import tk.zwander.wifilist.util.hasShizukuPermission
 import tk.zwander.wifilist.util.launchUrl
 
 class MainActivity : ComponentActivity(),
@@ -127,7 +124,10 @@ class MainActivity : ComponentActivity(),
                         packageManager.getApplicationInfo("moe.shizuku.privileged.api", 0)
                         setPositiveButton(R.string.open_shizuku) { _, _ ->
                             val shizukuIntent = Intent(Intent.ACTION_MAIN)
-                            shizukuIntent.component = ComponentName("moe.shizuku.privileged.api", "moe.shizuku.manager.MainActivity")
+                            shizukuIntent.component = ComponentName(
+                                "moe.shizuku.privileged.api",
+                                "moe.shizuku.manager.MainActivity"
+                            )
                             shizukuIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             startActivity(shizukuIntent)
                             finish()
@@ -210,9 +210,14 @@ class MainActivity : ComponentActivity(),
             )
             getPrivilegedConfiguredNetworks.invoke(iwm, user, pkg)
         }
+
         @Suppress("UNCHECKED_CAST")
-        val privilegedConfigsList = privilegedConfigs::class.java.getMethod("getList")
-            .invoke(privilegedConfigs) as List<WifiConfiguration>
+        val privilegedConfigsList = if (privilegedConfigs != null) {
+            privilegedConfigs::class.java.getMethod("getList")
+                .invoke(privilegedConfigs) as List<WifiConfiguration>
+        } else {
+            listOf()
+        }
 
         val items = privilegedConfigsList
             .sortedBy { it.SSID.lowercase() }
@@ -227,9 +232,7 @@ class MainActivity : ComponentActivity(),
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class,
-    ExperimentalFoundationApi::class
-)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainContent(networks: List<WifiConfiguration>) {
     var searchText by remember {
@@ -295,7 +298,9 @@ fun MainContent(networks: List<WifiConfiguration>) {
                                 Menu(
                                     isShowing = showingPopup,
                                     onDismissRequest = { showingPopup = false },
-                                    onShowSupportersDialog = { showingSupporters = !showingSupporters },
+                                    onShowSupportersDialog = {
+                                        showingSupporters = !showingSupporters
+                                    },
                                     onShowSettings = { showingSettings = true }
                                 )
                             }
@@ -307,7 +312,9 @@ fun MainContent(networks: List<WifiConfiguration>) {
                     contentPadding = padding,
                     columns = StaggeredGridCells.Adaptive(minSize = 400.dp)
                 ) {
-                    items(networks.filter { it.SSID.contains(searchText, true) }, { item -> "${item.SSID}${item.preSharedKey}${item.wepKeys.joinToString("")}" }) { config ->
+                    items(
+                        networks.filter { it.SSID.contains(searchText, true) },
+                        { item -> "${item.SSID}${item.preSharedKey}${item.wepKeys.joinToString("")}" }) { config ->
                         var expanded by remember {
                             mutableStateOf(false)
                         }
@@ -324,7 +331,9 @@ fun MainContent(networks: List<WifiConfiguration>) {
             }
         }
 
-        SupportersDialog(isShowing = showingSupporters, onDismissRequest = { showingSupporters = false })
+        SupportersDialog(
+            isShowing = showingSupporters,
+            onDismissRequest = { showingSupporters = false })
 
         if (showingSettings) {
             AlertDialog(
