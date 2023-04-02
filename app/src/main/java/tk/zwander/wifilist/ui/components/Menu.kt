@@ -35,6 +35,7 @@ fun Menu(
     onDismissRequest: () -> Unit,
     onShowSupportersDialog: () -> Unit,
     onShowSettings: () -> Unit,
+    onShowExportDialog: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val links = remember {
@@ -64,7 +65,12 @@ fun Menu(
                 R.string.settings
             ) {
                 onShowSettings()
-            }
+            },
+            MenuItem(
+                R.string.export
+            ) {
+                onShowExportDialog()
+            },
         )
     }
 

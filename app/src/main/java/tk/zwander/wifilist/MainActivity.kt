@@ -13,11 +13,14 @@ import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -25,6 +28,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,6 +46,8 @@ import rikka.shizuku.Shizuku
 import rikka.shizuku.ShizukuBinderWrapper
 import rikka.shizuku.ShizukuProvider
 import rikka.shizuku.SystemServiceHelper
+import tk.zwander.wifilist.data.rememberExportChoiceLaunchers
+import tk.zwander.wifilist.data.rememberExportChoices
 import tk.zwander.wifilist.ui.components.ExpandableSearchView
 import tk.zwander.wifilist.ui.components.Menu
 import tk.zwander.wifilist.ui.components.SettingsUI
@@ -53,6 +59,7 @@ import tk.zwander.wifilist.util.Preferences.cachedInfo
 import tk.zwander.wifilist.util.Preferences.updateCachedInfo
 import tk.zwander.wifilist.util.hasShizukuPermission
 import tk.zwander.wifilist.util.launchUrl
+import kotlin.math.exp
 
 class MainActivity : ComponentActivity(),
     Shizuku.OnRequestPermissionResultListener,
@@ -232,7 +239,7 @@ class MainActivity : ComponentActivity(),
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MainContent(networks: List<WifiConfiguration>) {
     var searchText by remember {
@@ -250,6 +257,12 @@ fun MainContent(networks: List<WifiConfiguration>) {
     var showingSettings by remember {
         mutableStateOf(false)
     }
+    var showingExportDialog by remember {
+        mutableStateOf(false)
+    }
+
+    val exportChoices = rememberExportChoices(configs = networks)
+    val exportLaunchers = rememberExportChoiceLaunchers(choices = exportChoices)
 
     WiFiListTheme {
         // A surface container using the 'background' color from the theme
@@ -301,7 +314,8 @@ fun MainContent(networks: List<WifiConfiguration>) {
                                     onShowSupportersDialog = {
                                         showingSupporters = !showingSupporters
                                     },
-                                    onShowSettings = { showingSettings = true }
+                                    onShowSettings = { showingSettings = true },
+                                    onShowExportDialog = { showingExportDialog = true }
                                 )
                             }
                         }
@@ -353,6 +367,48 @@ fun MainContent(networks: List<WifiConfiguration>) {
                 confirmButton = {
                     TextButton(onClick = { showingSettings = false }) {
                         Text(text = stringResource(id = android.R.string.ok))
+                    }
+                }
+            )
+        }
+
+        if (showingExportDialog) {
+            AlertDialog(
+                onDismissRequest = { showingExportDialog = false },
+                title = {
+                    Text(text = stringResource(id = R.string.export))
+                },
+                text = {
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        items(exportChoices, { it.mimeType }) { choice ->
+                            Card(
+                                onClick = {
+                                    exportLaunchers[choice.mimeType]?.invoke()
+                                    showingExportDialog = false
+                                }
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .heightIn(min = 56.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(text = stringResource(id = choice.titleRes))
+                                }
+                            }
+                        }
+                    }
+                },
+                properties = DialogProperties(
+                    usePlatformDefaultWidth = false
+                ),
+                modifier = Modifier.fillMaxWidth(0.75f),
+                confirmButton = {
+                    TextButton(onClick = { showingExportDialog = false }) {
+                        Text(text = stringResource(id = android.R.string.cancel))
                     }
                 }
             )

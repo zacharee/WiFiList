@@ -41,6 +41,9 @@
     <string name="copy">Copy</string>
     <string name="settings">Settings</string>
     <string name="view_cached">View Cached</string>
+    <string name="export">Export</string>
+    <string name="csv">CSV</string>
+    <string name="json">JSON</string>
 
     <string name="cache_networks">Cache Networks</string>
     <string name="cache_networks_desc">Save network info to WiFiList\'s preferences so you can view it without Shizuku running.</string>

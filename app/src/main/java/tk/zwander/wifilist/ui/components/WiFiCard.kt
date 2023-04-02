@@ -40,13 +40,7 @@ fun WiFiCard(
     val context = LocalContext.current
     val cbm = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
-    val psk = config.preSharedKey
-    val wep = config.wepKeys
-    val key = when {
-        !psk.isNullOrBlank() -> psk.stripQuotes()
-        !wep.all { it.isNullOrBlank() } -> wep.filterNotNull().joinToString("\n") { it.stripQuotes() }
-        else -> stringResource(id = R.string.no_password)
-    }
+    val key = config.simpleKey ?: stringResource(id = R.string.no_password)
 
     Card(
         modifier = modifier,
