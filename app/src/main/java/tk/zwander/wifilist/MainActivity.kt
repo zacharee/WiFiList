@@ -13,7 +13,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -59,7 +58,6 @@ import tk.zwander.wifilist.util.Preferences.cachedInfo
 import tk.zwander.wifilist.util.Preferences.updateCachedInfo
 import tk.zwander.wifilist.util.hasShizukuPermission
 import tk.zwander.wifilist.util.launchUrl
-import kotlin.math.exp
 
 class MainActivity : ComponentActivity(),
     Shizuku.OnRequestPermissionResultListener,

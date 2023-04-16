@@ -7,11 +7,9 @@ import android.icu.text.SimpleDateFormat
 import android.net.Uri
 import android.net.wifi.WifiConfiguration
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import tk.zwander.wifilist.R
@@ -28,7 +26,7 @@ data class ExportChoice(
 
 @Composable
 fun rememberExportChoices(configs: List<WifiConfiguration>): List<ExportChoice> {
-    return remember {
+    return remember(configs.toList()) {
         val exportItems = configs.mapToExportItems()
 
         listOf(
