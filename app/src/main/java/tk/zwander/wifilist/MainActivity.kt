@@ -208,12 +208,22 @@ class MainActivity : ComponentActivity(),
                 }
             )
         } else {
-            val getPrivilegedConfiguredNetworks = base.getMethod(
-                "getPrivilegedConfiguredNetworks",
-                String::class.java,
-                String::class.java
-            )
-            getPrivilegedConfiguredNetworks.invoke(iwm, user, pkg)
+            try {
+                val getPrivilegedConfiguredNetworks = base.getMethod(
+                    "getPrivilegedConfiguredNetworks",
+                    String::class.java,
+                    String::class.java
+                )
+                getPrivilegedConfiguredNetworks.invoke(iwm, user, pkg)
+            } catch (e: NoSuchMethodException) {
+                val getPrivilegedConfiguredNetworks = base.getMethod(
+                    "getPrivilegedConfiguredNetworks",
+                    String::class.java,
+                    String::class.java,
+                    Bundle::class.java,
+                )
+                getPrivilegedConfiguredNetworks.invoke(iwm, user, pkg, null)
+            }
         }
 
         @Suppress("UNCHECKED_CAST")
