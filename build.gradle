@@ -9,12 +9,12 @@ buildscript {
     }
 
     ext {
-        compose_version = '1.5.0-alpha03'
+        compose_version = '1.7.0-alpha02'
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.2.0-alpha01'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20"
-        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:7.4.0'
+        classpath 'com.android.tools.build:gradle:8.2.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.22"
+        classpath 'com.bugsnag:bugsnag-android-gradle-plugin:8.1.0'
     }
 }
