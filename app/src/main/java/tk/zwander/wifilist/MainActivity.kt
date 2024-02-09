@@ -12,11 +12,10 @@ import android.net.wifi.WifiConfiguration
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -59,7 +58,7 @@ import tk.zwander.wifilist.util.Preferences.updateCachedInfo
 import tk.zwander.wifilist.util.hasShizukuPermission
 import tk.zwander.wifilist.util.launchUrl
 
-class MainActivity : ComponentActivity(),
+class MainActivity : AppCompatActivity(),
     Shizuku.OnRequestPermissionResultListener,
     CoroutineScope by MainScope() {
     companion object {
@@ -247,7 +246,6 @@ class MainActivity : ComponentActivity(),
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MainContent(networks: List<WifiConfiguration>) {
     var searchText by remember {
