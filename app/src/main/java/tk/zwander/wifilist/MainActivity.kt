@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedVisibility
@@ -79,7 +80,10 @@ class MainActivity : AppCompatActivity(),
     private val currentNetworks = mutableStateListOf<WifiConfiguration>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+
+        supportActionBar?.hide()
 
         setContent {
             MainContent(currentNetworks)
@@ -273,8 +277,10 @@ fun MainContent(networks: List<WifiConfiguration>) {
     WiFiListTheme {
         // A surface container using the 'background' color from the theme
         Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+            modifier = Modifier.fillMaxSize()
+                .navigationBarsPadding()
+                .imePadding(),
+            color = MaterialTheme.colorScheme.background,
         ) {
             Scaffold(
                 bottomBar = {
@@ -286,7 +292,7 @@ fun MainContent(networks: List<WifiConfiguration>) {
                                 text = stringResource(id = R.string.saved_wifi_networks),
                                 modifier = Modifier.padding(start = 16.dp),
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface
+                                color = MaterialTheme.colorScheme.onSurface,
                             )
                         }
 
@@ -311,7 +317,7 @@ fun MainContent(networks: List<WifiConfiguration>) {
                             IconButton(onClick = { showingPopup = !showingPopup }) {
                                 Icon(
                                     imageVector = Icons.Default.Menu,
-                                    contentDescription = stringResource(id = R.string.menu)
+                                    contentDescription = stringResource(id = R.string.menu),
                                 )
 
                                 Menu(
@@ -321,16 +327,16 @@ fun MainContent(networks: List<WifiConfiguration>) {
                                         showingSupporters = !showingSupporters
                                     },
                                     onShowSettings = { showingSettings = true },
-                                    onShowExportDialog = { showingExportDialog = true }
+                                    onShowExportDialog = { showingExportDialog = true },
                                 )
                             }
                         }
                     }
-                }
+                },
             ) { padding ->
                 LazyVerticalStaggeredGrid(
                     contentPadding = padding,
-                    columns = StaggeredGridCells.Adaptive(minSize = 400.dp)
+                    columns = StaggeredGridCells.Adaptive(minSize = 400.dp),
                 ) {
                     items(
                         networks.filter { it.SSID.contains(searchText, true) },
@@ -344,7 +350,7 @@ fun MainContent(networks: List<WifiConfiguration>) {
                                 .padding(4.dp)
                                 .fillMaxWidth(),
                             expanded = expanded,
-                            onExpandChange = { expanded = it }
+                            onExpandChange = { expanded = it },
                         )
                     }
                 }
@@ -353,7 +359,8 @@ fun MainContent(networks: List<WifiConfiguration>) {
 
         SupportersDialog(
             isShowing = showingSupporters,
-            onDismissRequest = { showingSupporters = false })
+            onDismissRequest = { showingSupporters = false },
+        )
 
         if (showingSettings) {
             AlertDialog(
@@ -374,7 +381,7 @@ fun MainContent(networks: List<WifiConfiguration>) {
                     TextButton(onClick = { showingSettings = false }) {
                         Text(text = stringResource(id = android.R.string.ok))
                     }
-                }
+                },
             )
         }
 
@@ -387,7 +394,7 @@ fun MainContent(networks: List<WifiConfiguration>) {
                 text = {
                     LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
                         items(exportChoices, { it.mimeType }) { choice ->
                             Card(
@@ -416,7 +423,7 @@ fun MainContent(networks: List<WifiConfiguration>) {
                     TextButton(onClick = { showingExportDialog = false }) {
                         Text(text = stringResource(id = android.R.string.cancel))
                     }
-                }
+                },
             )
         }
     }
