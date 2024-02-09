@@ -58,8 +58,8 @@ fun Menu(
                 "https://github.com/zacharee/WiFiList"
             ),
             MenuItem(
-                R.string.twitter,
-                "https://twitter.com/Wander1236"
+                R.string.mastodon,
+                "https://androiddev.social/@wander1236"
             ),
             MenuItem(
                 R.string.settings
