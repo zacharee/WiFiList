@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import tk.zwander.wifilist.R
 import tk.zwander.wifilist.util.Preferences.cacheNetworks
@@ -28,7 +29,7 @@ import tk.zwander.wifilist.util.Preferences.updateCachedInfo
 
 @Composable
 fun SettingsUI(
-    loadedNetworks: List<WifiConfiguration>
+    loadedNetworks: List<WifiConfiguration>,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -60,7 +61,7 @@ fun SettingsUI(
                 Switch(
                     checked = context.cacheNetworks.collectAsState(initial = false).value,
                     onCheckedChange = {
-                        scope.launch {
+                        scope.launch(Dispatchers.IO) {
                             context.updateCacheNetworks(it)
 
                             if (it) {
