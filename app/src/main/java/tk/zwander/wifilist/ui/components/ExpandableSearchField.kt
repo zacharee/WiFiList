@@ -8,7 +8,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -36,7 +35,11 @@ fun ExpandableSearchView(
         mutableStateOf(expandedInitially)
     }
 
-    Crossfade(targetState = expanded, modifier = Modifier.animateContentSize()) { isSearchFieldVisible ->
+    Crossfade(
+        targetState = expanded,
+        modifier = Modifier.animateContentSize(),
+        label = "SearchIconCrossfade",
+    ) { isSearchFieldVisible ->
         Box(
             contentAlignment = Alignment.CenterStart,
             modifier = modifier
@@ -92,7 +95,6 @@ fun CollapsedSearchView(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ExpandedSearchView(
     searchDisplay: String,
@@ -147,8 +149,11 @@ fun ExpandedSearchView(
                     focusManager.clearFocus()
                 }
             ),
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = Color.Transparent
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent,
+                errorContainerColor = Color.Transparent,
             ),
             singleLine = true
         )
