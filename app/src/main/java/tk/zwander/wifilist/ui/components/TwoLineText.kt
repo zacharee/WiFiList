@@ -21,7 +21,7 @@ fun TwoLineText(
     value: String?,
     label: String,
     modifier: Modifier = Modifier,
-    secure: Boolean = false
+    secure: Boolean = false,
 ) {
     TwoLineTextInternal(secure, value, label, modifier)
 }
@@ -31,37 +31,38 @@ private fun TwoLineTextInternal(
     secure: Boolean,
     value: String?,
     label: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var showing by rememberSaveable(secure) {
         mutableStateOf(!secure)
     }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
+        modifier = modifier,
     ) {
         Crossfade(
             targetState = secure && !showing,
-            modifier = Modifier.animateContentSize()
+            modifier = Modifier.animateContentSize(),
+            label = "CrossFade${label}",
         ) {
             if (it) {
                 ValueContent(
                     value = CharArray(value?.length ?: 0) { '·' }.joinToString(""),
                     secure = secure,
-                    onShowingChanged = { showing = !showing }
+                    onShowingChanged = { showing = !showing },
                 )
             } else {
                 ValueContent(
                     value = value,
                     secure = secure,
-                    onShowingChanged = { showing = !showing }
+                    onShowingChanged = { showing = !showing },
                 )
             }
         }
 
         Text(
             fontSize = 13.sp,
-            text = label
+            text = label,
         )
     }
 }
@@ -71,7 +72,7 @@ private fun ValueContent(
     value: String?,
     secure: Boolean,
     onShowingChanged: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Card(
         modifier = modifier,
@@ -86,12 +87,12 @@ private fun ValueContent(
                 } else {
                     Modifier
                 })
-                .padding(8.dp)
+                .padding(8.dp),
         ) {
             Text(
                 fontSize = 16.sp,
                 text = value ?: "",
-                fontFamily = FontFamily.Monospace
+                fontFamily = FontFamily.Monospace,
             )
         }
     }

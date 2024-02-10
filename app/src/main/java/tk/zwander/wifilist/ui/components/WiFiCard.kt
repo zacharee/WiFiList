@@ -4,8 +4,6 @@ package tk.zwander.wifilist.ui.components
 
 import android.annotation.SuppressLint
 import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiEnterpriseConfig
 import android.os.Build
@@ -16,7 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -29,7 +28,6 @@ import tk.zwander.wifilist.R
 import tk.zwander.wifilist.util.*
 
 @SuppressLint("SoonBlockedPrivateApi")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WiFiCard(
     config: WifiConfiguration,
@@ -37,8 +35,7 @@ fun WiFiCard(
     onExpandChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-    val cbm = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val cbm = LocalClipboardManager.current
 
     val key = config.simpleKey ?: stringResource(id = R.string.no_password)
 
@@ -46,20 +43,20 @@ fun WiFiCard(
         modifier = modifier,
         onClick = {
             onExpandChange(!expanded)
-        }
+        },
     ) {
         Column(
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(8.dp),
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 val insecure = config.authType == WifiConfiguration.KeyMgmt.NONE
 
                 Icon(
                     painter = painterResource(id = if (insecure) R.drawable.ic_unlocked else R.drawable.ic_locked),
                     contentDescription = null,
-                    tint = if (insecure) Color.Yellow else Color.Green
+                    tint = if (insecure) Color.Yellow else Color.Green,
                 )
 
                 Spacer(modifier = Modifier.size(8.dp))
@@ -67,7 +64,7 @@ fun WiFiCard(
                 Text(
                     text = config.printableSsid,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
+                    fontSize = 20.sp,
                 )
             }
 
@@ -75,11 +72,11 @@ fun WiFiCard(
 
             FlowRow(
                 mainAxisAlignment = FlowMainAxisAlignment.SpaceAround,
-                mainAxisSize = SizeMode.Expand
+                mainAxisSize = SizeMode.Expand,
             ) {
                 TwoLineText(
                     label = stringResource(id = R.string.security),
-                    value = WifiConfiguration.KeyMgmt.strings[config.authType]
+                    value = WifiConfiguration.KeyMgmt.strings[config.authType],
                 )
 
                 Row(
@@ -88,20 +85,20 @@ fun WiFiCard(
                     TwoLineText(
                         label = stringResource(id = R.string.password),
                         value = key,
-                        secure = config.authType != WifiConfiguration.KeyMgmt.NONE
+                        secure = config.authType != WifiConfiguration.KeyMgmt.NONE,
                     )
 
                     if (config.authType != WifiConfiguration.KeyMgmt.NONE) {
                         IconButton(
                             onClick = {
-                                cbm.primaryClip = ClipData.newPlainText(config.SSID, key)
+                                cbm.setClip(ClipEntry(ClipData.newPlainText(config.SSID, key)))
                             },
-                            modifier = Modifier.size(32.dp)
+                            modifier = Modifier.size(32.dp),
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.baseline_content_copy_24),
                                 contentDescription = stringResource(id = R.string.copy),
-                                modifier = Modifier.padding(4.dp)
+                                modifier = Modifier.padding(4.dp),
                             )
                         }
                     }
@@ -114,7 +111,7 @@ fun WiFiCard(
 
                     FlowRow(
                         mainAxisAlignment = FlowMainAxisAlignment.SpaceAround,
-                        mainAxisSize = SizeMode.Expand
+                        mainAxisSize = SizeMode.Expand,
                     ) {
                         config.BSSID.letNotEmpty {
                             TwoLineText(value = config.BSSID, label = stringResource(id = R.string.bssid))
@@ -124,9 +121,10 @@ fun WiFiCard(
                         }
                         TwoLineText(value = config.creatorName, label = stringResource(id = R.string.creator))
                         TwoLineText(value = config.lastUpdateName, label = stringResource(id = R.string.last_update))
-                        TwoLineText(value = config.allowAutojoin.toString(), label = stringResource(
-                            id = R.string.auto_join
-                        ))
+                        TwoLineText(
+                            value = config.allowAutojoin.toString(),
+                            label = stringResource(id = R.string.auto_join),
+                        )
                         TwoLineText(value = config.hiddenSSID.toString(), label = stringResource(id = R.string.hidden))
 
                         config.enterpriseConfig?.let { wifiEnterpriseConfig ->
@@ -156,9 +154,10 @@ fun WiFiCard(
                                     )
 
                                     if (it) {
-                                        TwoLineText(value = wifiEnterpriseConfig.isServerCertValidationEnabled.toString(), label = stringResource(
-                                            id = R.string.server_cert_validation
-                                        ))
+                                        TwoLineText(
+                                            value = wifiEnterpriseConfig.isServerCertValidationEnabled.toString(),
+                                            label = stringResource(id = R.string.server_cert_validation),
+                                        )
                                     }
                                 }
                             }
@@ -175,7 +174,7 @@ fun WiFiCard(
                                     TwoLineText(
                                         value = (WifiEnterpriseConfig.Eap::class.java.getDeclaredField("strings")
                                             .get(null) as Array<String>)[it],
-                                        label = stringResource(id = R.string.eap_method)
+                                        label = stringResource(id = R.string.eap_method),
                                     )
                                 }
                             }
@@ -184,7 +183,7 @@ fun WiFiCard(
                             }
                             TwoLineText(
                                 value = wifiEnterpriseConfig.isAuthenticationSimBased.toString(),
-                                label = stringResource(id = R.string.sim_based)
+                                label = stringResource(id = R.string.sim_based),
                             )
                             wifiEnterpriseConfig.password.letNotEmpty {
                                 TwoLineText(value = it, label = stringResource(id = R.string.password))
