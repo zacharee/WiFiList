@@ -238,7 +238,7 @@ class MainActivity : AppCompatActivity(),
 
         val items = privilegedConfigsList
             .sortedBy { it.SSID.lowercase() }
-            .distinctBy { "${it.SSID}${it.preSharedKey}${it.wepKeys.joinToString("")}" }
+            .distinctBy { it.key }
 
         currentNetworks.clear()
         currentNetworks.addAll(items)
@@ -339,7 +339,7 @@ fun MainContent(networks: List<WifiConfiguration>) {
                 ) {
                     items(
                         items = networks.filter { it.SSID.contains(searchText, true) },
-                        key = { item -> "${item.SSID}${item.preSharedKey}${item.wepKeys.joinToString("")}" },
+                        key = { item -> item.key },
                     ) { config ->
                         var expanded by remember {
                             mutableStateOf(false)

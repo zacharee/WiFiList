@@ -54,4 +54,20 @@
     <string name="shizuku_required_desc">Shizuku is required to use this app. If you have Shizuku installed, please start it. Otherwise, you can install Shizuku from the Play Store.</string>
     <string name="install_shizuku">Install Shizuku</string>
     <string name="open_shizuku">Open Shizuku</string>
+
+    <string name="security_wpa_wpa2_enterprise">WPA/WPA2 Enterprise</string>
+    <string name="security_passpoint_r1_r2">Passpoint R1/R2</string>
+    <string name="security_passpoint_r3">Passpoint R3</string>
+    <string name="security_enhanced_open">Enhanced Open</string>
+    <string name="security_open">Open</string>
+    <string name="security_osen">OSEN</string>
+    <string name="security_wapi_cert">WAPI CERT</string>
+    <string name="security_wapi_psk">WAPI PSK</string>
+    <string name="security_wep">WEP</string>
+    <string name="security_wpa3_enterprise_192_bit">WPA3 Enterprise 192-Bit</string>
+    <string name="security_wpa3_enterprise">WPA3 Enterprise</string>
+    <string name="security_wpa3_personal">WPA3 Personal</string>
+    <string name="security_wpa_wpa2_personal">WPA/WPA2 Personal</string>
+    <string name="security_dpp">Easy Connect (DPP)</string>
+    <string name="security_unknown">Unknown</string>
 </resources>

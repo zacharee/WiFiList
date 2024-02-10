@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -74,7 +75,7 @@ fun WiFiCard(
             ) {
                 TwoLineText(
                     label = stringResource(id = R.string.security),
-                    value = WifiConfiguration.KeyMgmt.strings[config.authType],
+                    value = config.getSecurityType(LocalContext.current),
                 )
 
                 Row(
