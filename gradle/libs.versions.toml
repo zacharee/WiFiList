@@ -1,0 +1,44 @@
+[versions]
+accompanistFlowlayout = "0.30.0"
+activityCompose = "1.8.2"
+androidGradlePlugin = "8.2.2"
+shizuku = "13.1.5"
+bugsnagAndroid = "6.1.0"
+bugsnagGradlePlugin = "8.1.0"
+compose = "1.7.0-alpha02"
+composeCompiler = "1.5.9"
+coreKtx = "1.12.0"
+datastorePreferences = "1.1.0-beta01"
+fastcsv = "2.2.1"
+fragmentKtx = "1.6.2"
+gson = "2.10.1"
+hiddenapibypass = "4.3"
+kotlin = "1.9.22"
+lifecycleRuntimeKtx = "2.7.0"
+material = "1.11.0"
+material3 = "1.2.0"
+patreonsupportersretrieval = "8436bbdbdc"
+
+[libraries]
+accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanistFlowlayout" }
+activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+bugsnag-android = { module = "com.bugsnag:bugsnag-android", version.ref = "bugsnagAndroid" }
+compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "composeCompiler" }
+compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
+compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
+core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+fastcsv = { module = "de.siegmar:fastcsv", version.ref = "fastcsv" }
+fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+hiddenapibypass = { module = "org.lsposed.hiddenapibypass:hiddenapibypass", version.ref = "hiddenapibypass" }
+lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+material = { module = "com.google.android.material:material", version.ref = "material" }
+patreonSupportersRetrieval = { module = "com.github.zacharee:PatreonSupportersRetrieval", version.ref = "patreonsupportersretrieval" }
+shizuku-api = { module = "dev.rikka.shizuku:api", version.ref = "shizuku" }
+shizuku-provider = { module = "dev.rikka.shizuku:provider", version.ref = "shizuku" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
+bugsnag = { id = "com.bugsnag.android.gradle", version.ref = "bugsnagGradlePlugin" }
+kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

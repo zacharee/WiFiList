@@ -31,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -339,8 +338,9 @@ fun MainContent(networks: List<WifiConfiguration>) {
                     columns = StaggeredGridCells.Adaptive(minSize = 400.dp),
                 ) {
                     items(
-                        networks.filter { it.SSID.contains(searchText, true) },
-                        { item -> "${item.SSID}${item.preSharedKey}${item.wepKeys.joinToString("")}" }) { config ->
+                        items = networks.filter { it.SSID.contains(searchText, true) },
+                        key = { item -> "${item.SSID}${item.preSharedKey}${item.wepKeys.joinToString("")}" },
+                    ) { config ->
                         var expanded by remember {
                             mutableStateOf(false)
                         }
@@ -426,13 +426,5 @@ fun MainContent(networks: List<WifiConfiguration>) {
                 },
             )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    WiFiListTheme(darkTheme = true) {
-        MainContent(listOf())
     }
 }
