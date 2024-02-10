@@ -1,12 +1,12 @@
 package tk.zwander.wifilist.ui.components
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -14,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 @Composable
 fun TwoLineText(
@@ -33,36 +32,19 @@ private fun TwoLineTextInternal(
     label: String,
     modifier: Modifier = Modifier,
 ) {
-    var showing by rememberSaveable(secure) {
-        mutableStateOf(!secure)
-    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier,
     ) {
-        Crossfade(
-            targetState = secure && !showing,
-            modifier = Modifier.animateContentSize(),
-            label = "CrossFade${label}",
-        ) {
-            if (it) {
-                ValueContent(
-                    value = CharArray(value?.length ?: 0) { '·' }.joinToString(""),
-                    secure = secure,
-                    onShowingChanged = { showing = !showing },
-                )
-            } else {
-                ValueContent(
-                    value = value,
-                    secure = secure,
-                    onShowingChanged = { showing = !showing },
-                )
-            }
-        }
+        ValueContent(
+            value = value,
+            secure = secure,
+        )
 
         Text(
-            fontSize = 13.sp,
             text = label,
+            style = MaterialTheme.typography.bodySmall,
+            lineHeight = MaterialTheme.typography.bodySmall.fontSize,
         )
     }
 }
@@ -71,9 +53,15 @@ private fun TwoLineTextInternal(
 private fun ValueContent(
     value: String?,
     secure: Boolean,
-    onShowingChanged: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var showing by rememberSaveable(secure) {
+        mutableStateOf(!secure)
+    }
+    val secureText = remember(value?.length) {
+        CharArray(value?.length ?: 0) { '·' }.joinToString("")
+    }
+
     Card(
         modifier = modifier,
     ) {
@@ -82,18 +70,21 @@ private fun ValueContent(
             modifier = Modifier
                 .then(if (secure) {
                     Modifier.clickable {
-                        onShowingChanged()
+                        showing = !showing
                     }
                 } else {
                     Modifier
                 })
-                .padding(8.dp),
+                .padding(horizontal = 8.dp, vertical = 4.dp),
         ) {
-            Text(
-                fontSize = 16.sp,
-                text = value ?: "",
-                fontFamily = FontFamily.Monospace,
-            )
+            Crossfade(targetState = showing, label = "SecureCrossfade${value}") {
+                Text(
+                    text = if (it) value ?: "" else secureText,
+                    fontFamily = if (secure) FontFamily.Monospace else null,
+                    style = MaterialTheme.typography.bodyLarge,
+                    lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
+                )
+            }
         }
     }
 }

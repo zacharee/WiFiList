@@ -1,4 +1,5 @@
 @file:Suppress("DEPRECATION")
+@file:OptIn(ExperimentalLayoutApi::class)
 
 package tk.zwander.wifilist.ui.components
 
@@ -21,9 +22,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.accompanist.flowlayout.FlowMainAxisAlignment
-import com.google.accompanist.flowlayout.FlowRow
-import com.google.accompanist.flowlayout.SizeMode
 import tk.zwander.wifilist.R
 import tk.zwander.wifilist.util.*
 
@@ -36,7 +34,6 @@ fun WiFiCard(
     modifier: Modifier = Modifier,
 ) {
     val cbm = LocalClipboardManager.current
-
     val key = config.simpleKey ?: stringResource(id = R.string.no_password)
 
     Card(
@@ -71,8 +68,9 @@ fun WiFiCard(
             Spacer(modifier = Modifier.size(8.dp))
 
             FlowRow(
-                mainAxisAlignment = FlowMainAxisAlignment.SpaceAround,
-                mainAxisSize = SizeMode.Expand,
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 TwoLineText(
                     label = stringResource(id = R.string.security),
@@ -110,8 +108,9 @@ fun WiFiCard(
                     Spacer(modifier = Modifier.size(16.dp))
 
                     FlowRow(
-                        mainAxisAlignment = FlowMainAxisAlignment.SpaceAround,
-                        mainAxisSize = SizeMode.Expand,
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceAround,
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
                     ) {
                         config.BSSID.letNotEmpty {
                             TwoLineText(value = config.BSSID, label = stringResource(id = R.string.bssid))

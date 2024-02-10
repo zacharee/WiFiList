@@ -50,7 +50,6 @@ dependencies {
     implementation(libs.shizuku.provider)
     implementation(libs.hiddenapibypass)
     implementation(libs.material)
-    implementation(libs.accompanist.flowlayout)
 
     implementation(libs.patreonSupportersRetrieval)
     implementation(libs.gson)

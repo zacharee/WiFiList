@@ -1,5 +1,4 @@
 [versions]
-accompanistFlowlayout = "0.30.0"
 activityCompose = "1.8.2"
 androidGradlePlugin = "8.2.2"
 shizuku = "13.1.5"
@@ -20,7 +19,6 @@ material3 = "1.2.0"
 patreonsupportersretrieval = "8436bbdbdc"
 
 [libraries]
-accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanistFlowlayout" }
 activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 bugsnag-android = { module = "com.bugsnag:bugsnag-android", version.ref = "bugsnagAndroid" }
 compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "composeCompiler" }
