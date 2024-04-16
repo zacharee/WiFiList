@@ -59,4 +59,5 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.bugsnag.android)
     implementation(libs.fastcsv)
+    implementation(libs.relinker)
 }
