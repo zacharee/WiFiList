@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin)
@@ -18,6 +20,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        archivesName = "WiFiList_${versionName}"
     }
 
     compileOptions {
