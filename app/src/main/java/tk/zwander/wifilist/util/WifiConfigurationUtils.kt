@@ -2,6 +2,7 @@
 
 package tk.zwander.wifilist.util
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.internal.wifi.WifiAnnotations.SecurityType
 import android.net.wifi.WifiConfiguration
@@ -27,7 +28,7 @@ val WifiConfiguration.simpleKey: String?
 
 data class SecurityParams(
     @SecurityType
-    val type: Int,
+    val type: ExportSecurityType,
     @StringRes
     val labelRes: Int,
     val allowedKeyManagement: List<Int> = listOf(),
@@ -38,14 +39,15 @@ data class SecurityParams(
     val allowedGroupManagementCiphers: List<Int> = listOf(),
     val requirePmf: Boolean = false,
 ) {
+    @SuppressLint("InlinedApi")
     fun matches(config: WifiConfiguration): Boolean {
         return if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S) {
             when (type) {
-                WifiConfiguration.SECURITY_TYPE_OPEN -> allowedKeyManagement.all { config.allowedKeyManagement.get(it) }
-                WifiConfiguration.SECURITY_TYPE_WEP -> allowedKeyManagement.all { config.allowedKeyManagement.get(it) } &&
+                ExportSecurityType.OPEN -> allowedKeyManagement.all { config.allowedKeyManagement.get(it) }
+                ExportSecurityType.WEP -> allowedKeyManagement.all { config.allowedKeyManagement.get(it) } &&
                         allowedAuthAlgorithms.all { config.allowedAuthAlgorithms.get(it) }
-                WifiConfiguration.SECURITY_TYPE_PSK -> allowedKeyManagement.all { config.allowedKeyManagement.get(it) }
-                WifiConfiguration.SECURITY_TYPE_EAP -> allowedKeyManagement.all { config.allowedKeyManagement.get(it) }
+                ExportSecurityType.WPA_WPA2_PERSONAL -> allowedKeyManagement.all { config.allowedKeyManagement.get(it) }
+                ExportSecurityType.WPA_WPA2_ENTERPRISE -> allowedKeyManagement.all { config.allowedKeyManagement.get(it) }
                 else -> {
                     allowedKeyManagement.all { config.allowedKeyManagement.get(it) } &&
                             allowedProtocols.all { config.allowedProtocols.get(it) } &&
@@ -68,9 +70,30 @@ data class SecurityParams(
     }
 }
 
+@Suppress("unused")
+@SuppressLint("InlinedApi")
+enum class ExportSecurityType(val typeValue: Int) {
+    WPA_WPA2_ENTERPRISE(WifiConfiguration.SECURITY_TYPE_EAP),
+    ENHANCED_OPEN(WifiConfiguration.SECURITY_TYPE_OWE),
+    OPEN(WifiConfiguration.SECURITY_TYPE_OPEN),
+    OSEN(10),
+    WAPI_CERT(WifiConfiguration.SECURITY_TYPE_WAPI_CERT),
+    WAPI_PSK(WifiConfiguration.SECURITY_TYPE_WAPI_PSK),
+    WEP(WifiConfiguration.SECURITY_TYPE_WEP),
+    WPA3_ENTERPRISE_192BIT(WifiConfiguration.SECURITY_TYPE_EAP_WPA3_ENTERPRISE_192_BIT),
+    WPA3_ENTERPRISE(WifiConfiguration.SECURITY_TYPE_EAP_WPA3_ENTERPRISE),
+    WPA3_PERSONAL(WifiConfiguration.SECURITY_TYPE_SAE),
+    WPA_WPA2_PERSONAL(WifiConfiguration.SECURITY_TYPE_PSK),
+    EASY_CONNECT_DPP(WifiConfiguration.SECURITY_TYPE_DPP),
+    PASSPOINT_R1_R2(11),
+    PASSPOINT_R3(12),
+    UNKNOWN(-1),
+}
+
+@SuppressLint("InlinedApi")
 private val typeMapping = mapOf(
     WifiConfiguration.SECURITY_TYPE_EAP to SecurityParams(
-        type = WifiConfiguration.SECURITY_TYPE_EAP,
+        type = ExportSecurityType.WPA_WPA2_ENTERPRISE,
         allowedKeyManagement = listOf(WifiConfiguration.KeyMgmt.WPA_EAP, WifiConfiguration.KeyMgmt.IEEE8021X),
         allowedProtocols = listOf(Protocol.RSN, Protocol.WPA),
         allowedPairwiseCiphers = listOf(PairwiseCipher.CCMP, PairwiseCipher.TKIP, PairwiseCipher.GCMP_256),
@@ -78,7 +101,7 @@ private val typeMapping = mapOf(
         labelRes = R.string.security_wpa_wpa2_enterprise,
     ),
     WifiConfiguration.SECURITY_TYPE_OWE to SecurityParams(
-        type = WifiConfiguration.SECURITY_TYPE_OWE,
+        type = ExportSecurityType.ENHANCED_OPEN,
         allowedKeyManagement = listOf(WifiConfiguration.KeyMgmt.OWE),
         allowedProtocols = listOf(Protocol.RSN),
         allowedPairwiseCiphers = listOf(PairwiseCipher.CCMP, PairwiseCipher.GCMP_128, PairwiseCipher.GCMP_256),
@@ -86,13 +109,13 @@ private val typeMapping = mapOf(
         labelRes = R.string.security_enhanced_open,
     ),
     WifiConfiguration.SECURITY_TYPE_OPEN to SecurityParams(
-        type = WifiConfiguration.SECURITY_TYPE_OPEN,
+        type = ExportSecurityType.OPEN,
         allowedKeyManagement = listOf(WifiConfiguration.KeyMgmt.NONE),
         allowedProtocols = listOf(Protocol.RSN, Protocol.WPA),
         labelRes = R.string.security_open,
     ),
     10 /* OSEN */ to SecurityParams(
-        type = 10,
+        type = ExportSecurityType.OSEN,
         allowedKeyManagement = listOf(WifiConfiguration.KeyMgmt.OSEN),
         allowedProtocols = listOf(2),
         allowedPairwiseCiphers = listOf(PairwiseCipher.CCMP, PairwiseCipher.TKIP),
@@ -100,7 +123,7 @@ private val typeMapping = mapOf(
         labelRes = R.string.security_osen,
     ),
     WifiConfiguration.SECURITY_TYPE_WAPI_CERT to SecurityParams(
-        type = WifiConfiguration.SECURITY_TYPE_WAPI_CERT,
+        type = ExportSecurityType.WAPI_CERT,
         allowedKeyManagement = listOf(WifiConfiguration.KeyMgmt.WAPI_CERT),
         allowedProtocols = listOf(Protocol.WAPI),
         allowedPairwiseCiphers = listOf(PairwiseCipher.SMS4),
@@ -108,7 +131,7 @@ private val typeMapping = mapOf(
         labelRes = R.string.security_wapi_cert,
     ),
     WifiConfiguration.SECURITY_TYPE_WAPI_PSK to SecurityParams(
-        type = WifiConfiguration.SECURITY_TYPE_WAPI_PSK,
+        type = ExportSecurityType.WAPI_PSK,
         allowedKeyManagement = listOf(WifiConfiguration.KeyMgmt.WAPI_PSK),
         allowedProtocols = listOf(Protocol.WAPI),
         allowedPairwiseCiphers = listOf(PairwiseCipher.SMS4),
@@ -116,7 +139,7 @@ private val typeMapping = mapOf(
         labelRes = R.string.security_wapi_psk,
     ),
     WifiConfiguration.SECURITY_TYPE_WEP to SecurityParams(
-        type = WifiConfiguration.SECURITY_TYPE_WEP,
+        type = ExportSecurityType.WEP,
         allowedKeyManagement = listOf(WifiConfiguration.KeyMgmt.NONE),
         allowedProtocols = listOf(Protocol.RSN),
         allowedAuthAlgorithms = listOf(AuthAlgorithm.OPEN, AuthAlgorithm.SHARED),
@@ -125,7 +148,7 @@ private val typeMapping = mapOf(
         labelRes = R.string.security_wep,
     ),
     WifiConfiguration.SECURITY_TYPE_EAP_WPA3_ENTERPRISE_192_BIT to SecurityParams(
-        type = WifiConfiguration.SECURITY_TYPE_EAP_WPA3_ENTERPRISE_192_BIT,
+        type = ExportSecurityType.WPA3_ENTERPRISE_192BIT,
         allowedKeyManagement = listOf(WifiConfiguration.KeyMgmt.WPA_EAP, WifiConfiguration.KeyMgmt.IEEE8021X, WifiConfiguration.KeyMgmt.SUITE_B_192),
         allowedProtocols = listOf(Protocol.RSN),
         allowedPairwiseCiphers = listOf(PairwiseCipher.GCMP_128, PairwiseCipher.GCMP_256),
@@ -135,7 +158,7 @@ private val typeMapping = mapOf(
         labelRes = R.string.security_wpa3_enterprise_192_bit,
     ),
     WifiConfiguration.SECURITY_TYPE_EAP_WPA3_ENTERPRISE to SecurityParams(
-        type = WifiConfiguration.SECURITY_TYPE_EAP_WPA3_ENTERPRISE,
+        type = ExportSecurityType.WPA3_ENTERPRISE,
         allowedKeyManagement = listOf(WifiConfiguration.KeyMgmt.WPA_EAP, WifiConfiguration.KeyMgmt.IEEE8021X),
         allowedProtocols = listOf(Protocol.RSN),
         allowedPairwiseCiphers = listOf(PairwiseCipher.CCMP, PairwiseCipher.GCMP_256),
@@ -144,7 +167,7 @@ private val typeMapping = mapOf(
         labelRes = R.string.security_wpa3_enterprise,
     ),
     WifiConfiguration.SECURITY_TYPE_SAE to SecurityParams(
-        type = WifiConfiguration.SECURITY_TYPE_SAE,
+        type = ExportSecurityType.WPA3_PERSONAL,
         allowedKeyManagement = listOf(WifiConfiguration.KeyMgmt.SAE),
         allowedProtocols = listOf(Protocol.RSN),
         allowedPairwiseCiphers = listOf(PairwiseCipher.CCMP, PairwiseCipher.GCMP_128, PairwiseCipher.GCMP_256),
@@ -153,7 +176,7 @@ private val typeMapping = mapOf(
         labelRes = R.string.security_wpa3_personal,
     ),
     WifiConfiguration.SECURITY_TYPE_PSK to SecurityParams(
-        type = WifiConfiguration.SECURITY_TYPE_PSK,
+        type = ExportSecurityType.WPA_WPA2_PERSONAL,
         allowedKeyManagement = listOf(WifiConfiguration.KeyMgmt.WPA_PSK),
         allowedProtocols = listOf(Protocol.RSN, Protocol.WPA),
         allowedPairwiseCiphers = listOf(PairwiseCipher.CCMP, PairwiseCipher.TKIP),
@@ -161,7 +184,7 @@ private val typeMapping = mapOf(
         labelRes = R.string.security_wpa_wpa2_personal,
     ),
     WifiConfiguration.SECURITY_TYPE_DPP to SecurityParams(
-        type = WifiConfiguration.SECURITY_TYPE_DPP,
+        type = ExportSecurityType.EASY_CONNECT_DPP,
         allowedKeyManagement = listOf(WifiConfiguration.KeyMgmt.DPP),
         allowedProtocols = listOf(Protocol.RSN),
         allowedPairwiseCiphers = listOf(PairwiseCipher.CCMP, PairwiseCipher.GCMP_128, PairwiseCipher.GCMP_256),
@@ -170,7 +193,7 @@ private val typeMapping = mapOf(
         labelRes = R.string.security_dpp,
     ),
     11 /* PASSPOINT_R1_R2 */ to SecurityParams(
-        type = 11,
+        type = ExportSecurityType.PASSPOINT_R1_R2,
         allowedKeyManagement = listOf(WifiConfiguration.KeyMgmt.WPA_EAP, WifiConfiguration.KeyMgmt.IEEE8021X),
         allowedProtocols = listOf(Protocol.RSN),
         allowedPairwiseCiphers = listOf(PairwiseCipher.CCMP, PairwiseCipher.GCMP_256),
@@ -178,7 +201,7 @@ private val typeMapping = mapOf(
         labelRes = R.string.security_passpoint_r1_r2,
     ),
     12 /* PASSPOINT_R3 */ to SecurityParams(
-        type = 12,
+        type = ExportSecurityType.PASSPOINT_R3,
         allowedKeyManagement = listOf(WifiConfiguration.KeyMgmt.WPA_EAP, WifiConfiguration.KeyMgmt.IEEE8021X),
         allowedProtocols = listOf(Protocol.RSN),
         allowedPairwiseCiphers = listOf(PairwiseCipher.CCMP, PairwiseCipher.GCMP_256),

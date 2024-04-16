@@ -2,7 +2,6 @@
 
 package tk.zwander.wifilist.util
 
-import android.content.Context
 import android.net.wifi.WifiConfiguration
 import com.google.gson.GsonBuilder
 import de.siegmar.fastcsv.writer.CsvWriter
@@ -10,11 +9,11 @@ import tk.zwander.wifilist.data.WiFiExportItem
 import java.io.StringWriter
 
 object WiFiExportGenerator {
-    fun Collection<WifiConfiguration>.mapToExportItems(context: Context): List<WiFiExportItem> {
+    fun Collection<WifiConfiguration>.mapToExportItems(): List<WiFiExportItem> {
         return map {
             WiFiExportItem(
                 ssid = it.printableSsid,
-                security = it.getSecurityType(context = context),
+                security = it.securityParamsObj?.type?.name ?: "UNKNOWN",
                 password = it.simpleKey ?: "",
             )
         }

@@ -26,10 +26,8 @@ data class ExportChoice(
 
 @Composable
 fun rememberExportChoices(configs: List<WifiConfiguration>): List<ExportChoice> {
-    val context = LocalContext.current
-
     return remember(configs.toList()) {
-        val exportItems = configs.mapToExportItems(context)
+        val exportItems = configs.mapToExportItems()
 
         listOf(
             ExportChoice(
