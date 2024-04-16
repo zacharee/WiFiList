@@ -21,7 +21,7 @@ import java.util.Date
 data class ExportChoice(
     val mimeType: String,
     @StringRes val titleRes: Int,
-    val content: () -> String
+    val content: () -> String,
 )
 
 @Composable
@@ -35,12 +35,12 @@ fun rememberExportChoices(configs: List<WifiConfiguration>): List<ExportChoice> 
             ExportChoice(
                 mimeType = "text/csv",
                 titleRes = R.string.csv,
-                content = { exportItems.toCsv() }
+                content = { exportItems.toCsv() },
             ),
             ExportChoice(
                 mimeType = "application/json",
                 titleRes = R.string.json,
-                content = { exportItems.toJson() }
+                content = { exportItems.toJson() },
             ),
         )
     }
@@ -65,8 +65,8 @@ fun rememberExportChoiceLaunchers(choices: List<ExportChoice>): Map<String, () -
 }
 
 private fun Context.handleChoiceLauncherResult(uri: Uri?, content: String) {
-    if (uri != null) {
-        contentResolver.openOutputStream(uri).use { output ->
+    uri?.let { safeUri ->
+        contentResolver.openOutputStream(safeUri)?.use { output ->
             output.bufferedWriter().use { writer ->
                 writer.write(content)
             }
