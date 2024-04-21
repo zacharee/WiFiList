@@ -1,6 +1,7 @@
 package tk.zwander.wifilist.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -8,6 +9,8 @@ import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -125,17 +128,20 @@ fun ExpandedSearchView(
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = {
-            onExpandedChanged(false)
-            onSearchDisplayClosed()
-            keyboardController?.hide()
-        }) {
+        IconButton(
+            onClick = {
+                onExpandedChanged(false)
+                onSearchDisplayClosed()
+                keyboardController?.hide()
+            },
+        ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_back),
                 contentDescription = stringResource(id = R.string.back),
-                tint = tint
+                tint = tint,
             )
         }
+
         TextField(
             value = searchDisplay,
             onValueChange = {
@@ -154,7 +160,7 @@ fun ExpandedSearchView(
             keyboardActions = KeyboardActions(
                 onDone = {
                     focusManager.clearFocus()
-                }
+                },
             ),
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.Transparent,
@@ -162,7 +168,26 @@ fun ExpandedSearchView(
                 disabledContainerColor = Color.Transparent,
                 errorContainerColor = Color.Transparent,
             ),
-            singleLine = true
+            singleLine = true,
+            trailingIcon = {
+                IconButton(
+                    onClick = {
+                        onSearchDisplayChanged("")
+                    },
+                    enabled = searchDisplay.isNotEmpty(),
+                ) {
+                    val iconColor by animateColorAsState(
+                        targetValue = if (searchDisplay.isNotEmpty()) tint else tint.copy(alpha = LocalContentColor.current.alpha),
+                        label = "SearchClearIconColor",
+                    )
+
+                    Icon(
+                        imageVector = Icons.Default.Clear,
+                        contentDescription = stringResource(id = R.string.clear),
+                        tint = iconColor,
+                    )
+                }
+            },
         )
     }
 }
