@@ -57,6 +57,7 @@ import tk.zwander.wifilist.util.Preferences.cachedInfo
 import tk.zwander.wifilist.util.Preferences.updateCachedInfo
 import tk.zwander.wifilist.util.hasShizukuPermission
 import tk.zwander.wifilist.util.launchUrl
+import tk.zwander.wifilist.util.plus
 
 class MainActivity : AppCompatActivity(),
     Shizuku.OnRequestPermissionResultListener,
@@ -249,7 +250,6 @@ class MainActivity : AppCompatActivity(),
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MainContent(networks: List<WifiConfiguration>) {
     var searchText by remember {
@@ -277,8 +277,7 @@ fun MainContent(networks: List<WifiConfiguration>) {
     WiFiListTheme {
         Surface(
             modifier = Modifier.fillMaxSize()
-                .imePadding()
-                .imeNestedScroll(),
+                .imePadding(),
             color = MaterialTheme.colorScheme.background,
         ) {
             Scaffold(
@@ -334,7 +333,7 @@ fun MainContent(networks: List<WifiConfiguration>) {
                 },
             ) { padding ->
                 LazyVerticalStaggeredGrid(
-                    contentPadding = padding,
+                    contentPadding = padding + PaddingValues(horizontal = 8.dp),
                     columns = StaggeredGridCells.Adaptive(minSize = 400.dp),
                 ) {
                     items(
