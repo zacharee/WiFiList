@@ -17,6 +17,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -276,16 +280,20 @@ fun MainContent(networks: List<WifiConfiguration>) {
 
     WiFiListTheme {
         Surface(
-            modifier = Modifier.fillMaxSize()
-                .imePadding(),
+            modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background,
         ) {
             Scaffold(
                 bottomBar = {
                     BottomAppBar(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth()
+                            .imePadding(),
                     ) {
-                        AnimatedVisibility(visible = !searchExpanded) {
+                        AnimatedVisibility(
+                            visible = !searchExpanded,
+                            enter = fadeIn() + expandIn(expandFrom = Alignment.CenterStart),
+                            exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.CenterStart),
+                        ) {
                             Text(
                                 text = stringResource(id = R.string.saved_wifi_networks),
                                 modifier = Modifier.padding(start = 16.dp),
@@ -311,7 +319,11 @@ fun MainContent(networks: List<WifiConfiguration>) {
                             tint = MaterialTheme.colorScheme.onSurface,
                         )
 
-                        AnimatedVisibility(visible = !searchExpanded) {
+                        AnimatedVisibility(
+                            visible = !searchExpanded,
+                            enter = fadeIn() + expandIn(expandFrom = Alignment.CenterEnd),
+                            exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.CenterEnd),
+                        ) {
                             IconButton(onClick = { showingPopup = !showingPopup }) {
                                 Icon(
                                     imageVector = Icons.Default.Menu,

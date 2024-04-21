@@ -1,7 +1,10 @@
 package tk.zwander.wifilist.ui.components
 
-import androidx.compose.animation.Crossfade
-import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -31,39 +34,43 @@ fun ExpandableSearchView(
     expandedInitially: Boolean = false,
     tint: Color = MaterialTheme.colorScheme.onPrimary
 ) {
-    val (expanded, onExpandedChanged) = remember {
+    var expanded by remember {
         mutableStateOf(expandedInitially)
     }
 
-    Crossfade(
-        targetState = expanded,
-        modifier = Modifier.animateContentSize(),
-        label = "SearchIconCrossfade",
-    ) { isSearchFieldVisible ->
-        Box(
-            contentAlignment = Alignment.CenterStart,
-            modifier = modifier
-                .fillMaxHeight()
+    Box(
+        contentAlignment = Alignment.CenterStart,
+        modifier = modifier
+            .fillMaxHeight(),
+    ) {
+        AnimatedVisibility(
+            visible = expanded,
+            enter = fadeIn() + expandIn(expandFrom = Alignment.CenterEnd),
+            exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.CenterEnd),
         ) {
-            when (isSearchFieldVisible) {
-                true -> ExpandedSearchView(
-                    searchDisplay = searchDisplay,
-                    onSearchDisplayChanged = onSearchDisplayChanged,
-                    onSearchDisplayClosed = onSearchDisplayClosed,
-                    onExpandedChanged = onExpandedChanged,
-                    tint = tint
-                )
+            ExpandedSearchView(
+                searchDisplay = searchDisplay,
+                onSearchDisplayChanged = onSearchDisplayChanged,
+                onSearchDisplayClosed = onSearchDisplayClosed,
+                onExpandedChanged = { expanded = it },
+                tint = tint,
+            )
+        }
 
-                false -> CollapsedSearchView(
-                    onExpandedChanged = {
-                        onExpandedChanged(it)
-                        if (it) {
-                            onSearchDisplayOpened()
-                        }
-                    },
-                    tint = tint
-                )
-            }
+        AnimatedVisibility(
+            visible = !expanded,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
+            CollapsedSearchView(
+                onExpandedChanged = {
+                    expanded = it
+                    if (it) {
+                        onSearchDisplayOpened()
+                    }
+                },
+                tint = tint,
+            )
         }
     }
 }
