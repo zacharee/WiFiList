@@ -36,6 +36,9 @@ fun WiFiCard(
 ) {
     val cbm = LocalClipboardManager.current
     val key = config.simpleKey ?: stringResource(id = R.string.no_password)
+    val securityParams = config.securityParamsObj
+    val insecure = securityParams?.type == ExportSecurityType.OPEN
+    val hasKey = config.simpleKey != null
 
     Card(
         modifier = modifier,
@@ -49,8 +52,6 @@ fun WiFiCard(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                val insecure = config.authType == WifiConfiguration.KeyMgmt.NONE
-
                 Icon(
                     painter = painterResource(id = if (insecure) R.drawable.ic_unlocked else R.drawable.ic_locked),
                     contentDescription = null,
@@ -84,10 +85,10 @@ fun WiFiCard(
                     TwoLineText(
                         label = stringResource(id = R.string.password),
                         value = key,
-                        secure = config.authType != WifiConfiguration.KeyMgmt.NONE,
+                        secure = hasKey,
                     )
 
-                    if (config.authType != WifiConfiguration.KeyMgmt.NONE) {
+                    if (hasKey) {
                         IconButton(
                             onClick = {
                                 cbm.setClip(ClipEntry(ClipData.newPlainText(config.SSID, key)))
