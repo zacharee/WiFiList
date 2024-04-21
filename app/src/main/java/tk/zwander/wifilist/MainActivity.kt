@@ -249,6 +249,7 @@ class MainActivity : AppCompatActivity(),
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MainContent(networks: List<WifiConfiguration>) {
     var searchText by remember {
@@ -274,11 +275,10 @@ fun MainContent(networks: List<WifiConfiguration>) {
     val exportLaunchers = rememberExportChoiceLaunchers(choices = exportChoices)
 
     WiFiListTheme {
-        // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize()
-                .navigationBarsPadding()
-                .imePadding(),
+                .imePadding()
+                .imeNestedScroll(),
             color = MaterialTheme.colorScheme.background,
         ) {
             Scaffold(
