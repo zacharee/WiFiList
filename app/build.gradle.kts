@@ -1,8 +1,7 @@
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.bugsnag)
 }
 
@@ -17,11 +16,11 @@ android {
         versionCode = 13
         versionName = "1.3.2"
 
+        setProperty("archivesBaseName", "WiFiList_$versionName")
+
         vectorDrawables {
             useSupportLibrary = true
         }
-
-        archivesName = "WiFiList_${versionName}"
     }
 
     compileOptions {

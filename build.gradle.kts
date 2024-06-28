@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.bugsnag) apply false
     alias(libs.plugins.kotlin) apply false
+    alias(libs.plugins.kotlin.compose) apply false
 }
 
 tasks.register<Delete>("clean") {
