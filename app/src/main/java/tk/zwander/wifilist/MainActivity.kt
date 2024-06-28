@@ -234,12 +234,10 @@ class MainActivity : AppCompatActivity(),
         }
 
         @Suppress("UNCHECKED_CAST")
-        val privilegedConfigsList = if (privilegedConfigs != null) {
-            privilegedConfigs::class.java.getMethod("getList")
-                .invoke(privilegedConfigs) as List<WifiConfiguration>
-        } else {
-            listOf()
-        }
+        val privilegedConfigsList = privilegedConfigs?.let {
+            it::class.java.getMethod("getList")
+                .invoke(it) as List<WifiConfiguration>
+        } ?: listOf()
 
         val items = privilegedConfigsList
             .sortedBy { it.SSID.lowercase() }
