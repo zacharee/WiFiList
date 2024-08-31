@@ -4,3 +4,5 @@
 /deploymentTargetSelector.xml
 /migrations.xml
 /other.xml
+/appInsightsSettings.xml
+/runConfigurations.xml
