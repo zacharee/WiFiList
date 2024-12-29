@@ -189,7 +189,12 @@ class MainActivity : AppCompatActivity(),
             ShizukuBinderWrapper(SystemServiceHelper.getSystemService(Context.WIFI_SERVICE))
         )
 
-        val user = if (Shizuku.getUid() == 0) "root" else "shell"
+        val user = when (Shizuku.getUid()) {
+            0 -> "root"
+            1000 -> "system"
+            2000 -> "shell"
+            else -> throw IllegalArgumentException("Unknown Shizuku user ${Shizuku.getUid()}")
+        }
         val pkg = "com.android.shell"
 
         val privilegedConfigs = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S_V2) {
